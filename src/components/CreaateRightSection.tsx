@@ -4,12 +4,12 @@ import { useCourseCreate } from '@/Providers/CreateProvider'
 const CreaateRightSection = () => {
   const {courseData} = useCourseCreate();
   return (
-    <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-sm">
+    <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-sm h-fit">
     <h2 className="text-lg font-semibold mb-4">Tips & Overview</h2>
     <div className="space-y-3 text-sm text-gray-700">
       <div className="flex items-start gap-2">
         <Image
-          src="/globe.svg"
+          src="/bulb.svg"
           width={20}
           height={20}
           alt="Tip Icon"
@@ -22,7 +22,7 @@ const CreaateRightSection = () => {
       </div>
       <div className="flex items-start gap-2">
         <Image
-          src="/globe.svg"
+          src="/clock.svg"
           width={20}
           height={20}
           alt="Tip Icon"
@@ -32,7 +32,7 @@ const CreaateRightSection = () => {
       </div>
       <div className="flex items-start gap-2">
         <Image
-          src="/globe.svg"
+          src="/shield.svg"
           width={20}
           height={20}
           alt="Tip Icon"

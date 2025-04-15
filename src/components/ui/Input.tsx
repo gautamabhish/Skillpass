@@ -1,10 +1,11 @@
 'use client';
 import React, { useState, useRef } from "react";
+import Image from "next/image";
 
 export enum QuestionType {
   SingleCorrect = "Single Correct",
   MultiCorrect = "Multi Correct",
-  String = "String",
+  Subjective = "Subjective",
   File = "File"
 }
 
@@ -18,6 +19,7 @@ interface InputProps {
   error?: string;
   helperText?: string;
 }
+
 
 const isFileType = (type?: QuestionType) => type === QuestionType.File;
 
@@ -50,6 +52,17 @@ const Input: React.FC<InputProps> = ({
   const handleAddOption = () => {
     setOptions([...options, ""]);
   };
+  const handleRemoveOption = (index: number) => {
+    const newOptions = options.filter((_, i) => i !== index);
+    const newCorrectAnswers = correctAnswers
+      .filter((i) => i !== index)
+      .map((i) => (i > index ? i - 1 : i)); // shift indices
+  
+    setOptions(newOptions);
+    setCorrectAnswers(newCorrectAnswers);
+    onChange({ options: newOptions, correctAnswers: newCorrectAnswers });
+  };
+  
 
   const handleMarkCorrect = (index: number) => {
     if (type === QuestionType.SingleCorrect) {
@@ -116,35 +129,46 @@ const Input: React.FC<InputProps> = ({
         </>
       ) : isOptionType(type) ? (
         <div className="flex flex-col gap-2">
-          {options.map((opt, index) => (
-            <div key={index} className="flex items-center gap-2">
-              {type === QuestionType.SingleCorrect ? (
-                <input
-                  type="radio"
-                  name="correct"
-                  checked={correctAnswers[0] === index}
-                  onChange={() => handleMarkCorrect(index)}
-                />
-              ) : (
-                <input
-                  type="checkbox"
-                  checked={correctAnswers.includes(index)}
-                  onChange={() => handleMarkCorrect(index)}
-                />
-              )}
-              <input
-                type="text"
-                value={opt}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
-                placeholder={`Option ${index + 1}`}
-              />
-            </div>
-          ))}
+         {options.map((opt, index) => (
+  <div key={index} className="flex items-center gap-2">
+    {type === QuestionType.SingleCorrect ? (
+      <input
+        type="radio"
+        name="correct"
+        checked={correctAnswers[0] === index}
+        onChange={() => handleMarkCorrect(index)}
+      />
+    ) : (
+      <input
+        type="checkbox"
+        checked={correctAnswers.includes(index)}
+        onChange={() => handleMarkCorrect(index)}
+      />
+    )}
+    <input
+      type="text"
+      value={opt}
+      onChange={(e) => handleOptionChange(index, e.target.value)}
+      className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
+      placeholder={`Option ${index + 1}`}
+    />
+    {options.length > 1 && (
+      <button
+        type="button"
+        onClick={() => handleRemoveOption(index)}
+        className="text-red-500 hover:text-red-700"
+        title="Remove option"
+      >
+        <Image src="./delete.svg" alt="delete" width={20} height={20}></Image>
+      </button>
+    )}
+  </div>
+))}
+
           <button
             type="button"
             onClick={handleAddOption}
-            className="self-start mt-2 px-3 py-1 text-sm rounded bg-blue-100 hover:bg-blue-200 text-blue-600"
+            className="self-start mt-2 px-3 py-1 text-sm rounded  hover:bg-blue-200 text-blue-600"
           >
             + Add Option
           </button>

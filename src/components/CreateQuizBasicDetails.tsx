@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { Inter } from 'next/font/google';
 import { useCourseCreate } from '@/Providers/CreateProvider';
-
+import Input from './ui/Input';
+import { QuestionType } from './ui/Input';
 const inter = Inter({ subsets: ['latin'] });
 
 const CreateQuizBasicDetails = () => {
@@ -45,7 +46,7 @@ const CreateQuizBasicDetails = () => {
   };
 
   return (
-    <div className={`${inter.className} space-y-4 pr-4`}>
+    <div className={`${inter.className} bg-white space-y-4 px-4 pb-2 `}>
       <div className="text-xl font-bold mt-2 pt-4 text-gray-800">
         Basic Quiz Details
       </div>
@@ -62,6 +63,10 @@ const CreateQuizBasicDetails = () => {
         />
       </div>
 
+      <div>
+      <p className="font-medium text-gray-700">Course Thumbanil (if any)</p>
+      <Input type={QuestionType.File} onChange={(e)=>{console.log(e)}}></Input>
+      </div>
       {/* Quiz Title Input */}
       {/* NOTE: Update your provider to have a distinct key for quiz title if needed */}
       <div>

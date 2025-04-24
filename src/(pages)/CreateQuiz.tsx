@@ -1,10 +1,10 @@
 import React from 'react'
 import { Inter } from 'next/font/google'
-import CreateQuizBasicDetails from '@/components/CreateQuizBasicDetails'
-import CreaateRightSection from '@/components/CreaateRightSection'
-import TimeConfiguration from '@/components/TimeConfiguration'
-import QuizSettings from '@/components/QuizSettings'
-import AddQuestions from '@/components/AddQuestions'
+import CreateQuizBasicDetails from '@/components/create/CreateQuizBasicDetails'
+import CreaateRightSection from '@/components/create/CreaateRightSection'
+import TimeConfiguration from '@/components/create/TimeConfiguration'
+import QuizSettings from '@/components/create/QuizSettings'
+import AddQuestions from '@/components/create/AddQuestions'
 const inter = Inter({ subsets: ['latin'] })
 
 const CreateQuiz = () => {

@@ -1,8 +1,8 @@
 import React from 'react'
-import Navbar from '@/components/ui/Navbar'
-import Hero from '@/components/Hero'
-import Main from '@/components/Main'
-import Footer from '@/components/ui/Footer'
+import Navbar from '@/components/ui/globals/Navbar'
+import Hero from '@/components/ui/globals/Hero'
+import Main from '@/components/ui/globals/Main'
+import Footer from '@/components/ui/globals/Footer'
 const Home = () => {
   return (
     <div>

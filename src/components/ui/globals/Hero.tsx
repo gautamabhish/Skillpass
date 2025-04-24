@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import heroImg from '../../public/heroleft.png';
-
+import heroImg from '/public/heroleft.png';
+import Link from 'next/link';
 const Hero = () => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-around p-8 bg-gradient-to-b from-[#f1f7ff] to-[#ddeeff] py-16">
@@ -28,9 +28,9 @@ const Hero = () => {
         <Image
           src={heroImg}
           alt="Hero"
-          width={660}
-          height={520}
-          className='rounded-sm'
+          width={760}
+          height={620}
+          className='rounded-lg'
           priority
         />
       </div>

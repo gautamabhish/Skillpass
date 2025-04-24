@@ -27,7 +27,7 @@ const isOptionType = (type?: QuestionType) =>
   type === QuestionType.SingleCorrect || type === QuestionType.MultiCorrect;
 
 const Input: React.FC<InputProps> = ({
-  type = QuestionType.String,
+  type = QuestionType.Subjective,
   label,
   value,
   onChange,

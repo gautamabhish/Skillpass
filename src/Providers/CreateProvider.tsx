@@ -1,17 +1,34 @@
 'use client';
 
 import React, { createContext, useState, ReactNode, useContext } from 'react';
+import { QuestionType } from '@/components/ui/globals/Input';
+export interface Duration {
+  hours: number;
+  minutes: number;
+}
+
+export interface Question {
+  id: number;
+  type: QuestionType;
+  text: string;
+  points: number;
+  options?: string[];           // only for MCQs
+  correctAnswers?: number[];    // indices for correct options (for MCQs)
+  answerText?: string;          // for String type
+  fileURL?: string;             // for File type
+}
+
 
 export interface CourseData {
   thumbURL: string | null;
   price: string | null;
-  duration: string;
+  duration: Duration;
   totalPoints: number;
-  Description: string;
+  Description:string | null;
   Tags: string[] | null;
   AllowBacktrack: boolean;
   Randomize: boolean;
-  Questions:string[];
+  Questions:Question[];
   QuizTitle:string;
 }
 
@@ -23,7 +40,7 @@ interface CourseCreateContextProps {
 const defaultData: CourseData = {
   thumbURL: null,
   price: null,
-  duration: '',
+  duration: {hours:0,minutes:0},
   totalPoints: 0,
   Description: '',
   Tags: null,

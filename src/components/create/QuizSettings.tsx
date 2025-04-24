@@ -1,10 +1,11 @@
 'use client'
 import React from 'react'
-import Switch from './ui/Switch'
+import Switch from '../ui/globals/Switch'
+import { useCourseCreate } from '@/Providers/CreateProvider'
 
 const QuizSettings = () => {
-  const [Bactrack, setBackTrack] = React.useState<boolean>(true);
-  const [Randomize, setRandomize] = React.useState<boolean>(false);
+  const{courseData,setCourseData}= useCourseCreate()
+ 
 
   return (
     <div className="bg-white flex flex-col justify-start gap-6 p-6">
@@ -16,7 +17,7 @@ const QuizSettings = () => {
           <div className="text-lg font-bold text-gray-700">Allow Backtracking</div>
           <div className="text-sm text-gray-500">Let learners navigate back to previous questions</div>
         </div>
-        <Switch checked={Bactrack} onChange={() => setBackTrack((prev) => !prev)} />
+        <Switch checked={courseData.AllowBacktrack} onChange={() => setCourseData(prev => ({...prev,AllowBacktrack:!prev.AllowBacktrack}))} />
       </div>
 
       {/* Randomize Option */}
@@ -25,7 +26,7 @@ const QuizSettings = () => {
           <div className="text-lg font-bold text-gray-700">Randomize Questions</div>
           <div className="text-sm text-gray-500">Shuffle the order of questions for each learner</div>
         </div>
-        <Switch checked={Randomize} onChange={() => setRandomize((prev) => !prev)} />
+        <Switch checked={courseData.Randomize} onChange={() => setCourseData(prev =>({...prev,Randomize:!prev.Randomize}) )} />
       </div>
     </div>
   );

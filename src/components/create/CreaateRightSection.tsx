@@ -4,7 +4,7 @@ import { useCourseCreate } from '@/Providers/CreateProvider'
 const CreaateRightSection = () => {
   const {courseData} = useCourseCreate();
   return (
-    <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-sm h-fit">
+    <div className="bg-white shadow-md  rounded-xl p-6 w-full max-w-sm h-fit">
     <h2 className="text-lg font-semibold mb-4">Tips & Overview</h2>
     <div className="space-y-3 text-sm text-gray-700">
       <div className="flex items-start gap-2">
@@ -52,11 +52,14 @@ const CreaateRightSection = () => {
       </div>
       <div className="flex justify-between">
         <span>Total Points</span>
-        <span className='font-bold'>0</span>
+        <span className='font-bold'>
+  {courseData.Questions.reduce((item, item2) => item + item2.points, 0)}
+</span>
+
       </div>
       <div className="flex justify-between">
         <span>Duration</span>
-        <span className='font-bold'>{courseData.duration || 0}:{courseData.duration || 0}</span>
+        <span className='font-bold'>{courseData.duration.hours || '00'}:{courseData.duration.minutes || '00'}</span>
       </div>
     </div>
   </div>

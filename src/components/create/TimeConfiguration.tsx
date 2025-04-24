@@ -1,17 +1,20 @@
 'use client';
 import React from 'react';
-import Switch from './ui/Switch';
+import Switch from '../ui/globals/Switch';
+import { useCourseCreate } from '@/Providers/CreateProvider';
 
 const TimeConfiguration = () => {
+  const{courseData,setCourseData} = useCourseCreate();
   const [enabled, setEnabled] = React.useState<boolean>(false);
-  const [duration, setDuration] = React.useState({ hours: '', minutes: '' });
+  
 
   const handleDurationChange = (field: 'hours' | 'minutes', value: string) => {
     if (!/^\d*$/.test(value)) return; // Only allow digits
-    setDuration((prev) => ({
+    setCourseData((prev) => ({
       ...prev,
       [field]: value,
-    }));
+    }))
+    
   };
 
   return (
@@ -28,7 +31,7 @@ const TimeConfiguration = () => {
               <input
                 type="text"
                 maxLength={2}
-                value={duration.hours}
+                value={courseData.duration.hours}
                 onChange={(e) => handleDurationChange('hours', e.target.value)}
                 placeholder="00"
                 className="w-16 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-center"
@@ -39,7 +42,7 @@ const TimeConfiguration = () => {
               <input
                 type="text"
                 maxLength={2}
-                value={duration.minutes}
+                value={courseData.duration.minutes}
                 onChange={(e) => handleDurationChange('minutes', e.target.value)}
                 placeholder="00"
                 className="w-16 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-center"

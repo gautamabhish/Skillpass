@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { Inter } from 'next/font/google';
 import { useCourseCreate } from '@/Providers/CreateProvider';
-import Input from './ui/Input';
-import { QuestionType } from './ui/Input';
+import Input from '../ui/globals/Input';
+import { QuestionType } from '../ui/globals/Input';
 const inter = Inter({ subsets: ['latin'] });
 
 const CreateQuizBasicDetails = () => {

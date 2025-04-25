@@ -18,6 +18,8 @@ interface InputProps {
   className?: string;
   error?: string;
   helperText?: string;
+  options?: string[];             // Add this line
+  correctAnswers?: number[];      // Add this line
 }
 
 
@@ -46,8 +48,11 @@ const Input: React.FC<InputProps> = ({
     const newOptions = [...options];
     newOptions[index] = val;
     setOptions(newOptions);
-    onChange({ options: newOptions, correctAnswers });
+    onChange({ options: newOptions, correctAnswers }); // Make sure this data structure matches parent component
   };
+  
+
+  
 
   const handleAddOption = () => {
     setOptions([...options, ""]);
@@ -65,16 +70,14 @@ const Input: React.FC<InputProps> = ({
   
 
   const handleMarkCorrect = (index: number) => {
-    if (type === QuestionType.SingleCorrect) {
-      setCorrectAnswers([index]);
-      onChange({ options, correctAnswers: [index] });
-    } else {
-      const updated = correctAnswers.includes(index)
-        ? correctAnswers.filter((i) => i !== index)
-        : [...correctAnswers, index];
-      setCorrectAnswers(updated);
-      onChange({ options, correctAnswers: updated });
-    }
+    const updated = type === QuestionType.SingleCorrect
+      ? [index] // For Single Correct, only one correct answer can be selected
+      : correctAnswers.includes(index)
+      ? correctAnswers.filter(i => i !== index)
+      : [...correctAnswers, index];
+  
+    setCorrectAnswers(updated);
+    onChange({ options, correctAnswers: updated });
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -122,6 +125,7 @@ const Input: React.FC<InputProps> = ({
 
           <input
             type="file"
+             accept="image/*,video/*,audio/*"
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}

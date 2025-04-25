@@ -3,15 +3,12 @@
 import React, { useState } from 'react';
 import { Inter } from 'next/font/google';
 import { useCourseCreate } from '@/Providers/CreateProvider';
-import Input from '../ui/globals/Input';
-import { QuestionType } from '../ui/globals/Input';
+
 const inter = Inter({ subsets: ['latin'] });
 
 const CreateQuizBasicDetails = () => {
   // Using local state for the tag input field:
   const [tagInput, setTagInput] = useState('');
-  
-  // Getting data and setter from the provider:
   const { courseData, setCourseData } = useCourseCreate();
 
   // Handler to update any field in the provider state:
@@ -45,8 +42,34 @@ const CreateQuizBasicDetails = () => {
     }));
   };
 
+  // Handle file change (image input):
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      courseData.thumbFile = file; // Store the file temporarily
+      const fileUrl = URL.createObjectURL(file);
+      setCourseData((prev) => ({
+        ...prev,
+        thumbURL: fileUrl,
+      }));
+    }
+  };
+
+  // Handle file drop:
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      const fileUrl = URL.createObjectURL(droppedFile);
+      setCourseData((prev) => ({
+        ...prev,
+        thumbURL: fileUrl,
+      }));
+    }
+  };
+
   return (
-    <div className={`${inter.className} bg-white space-y-4 px-4 pb-2 `}>
+    <div className={`${inter.className} bg-white space-y-4 px-4 pb-2`}>
       <div className="text-xl font-bold mt-2 pt-4 text-gray-800">
         Basic Quiz Details
       </div>
@@ -56,24 +79,48 @@ const CreateQuizBasicDetails = () => {
         <p className="font-medium text-gray-700">Course URL</p>
         <input
           type="text"
-          value={courseData.thumbURL || ''}
-          onChange={(e) => handleInputChange('thumbURL', e.target.value)}
+          value={courseData.courseURL || ''}
+          onChange={(e) => handleInputChange('courseURL', e.target.value)}
           placeholder="Enter the course URL"
+          title="You quiz is associated with any course."
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
 
+      {/* Course Thumbnail Input */}
       <div>
-      <p className="font-medium text-gray-700">Course Thumbanil (if any)</p>
-      <Input type={QuestionType.File} onChange={(e)=>{console.log(e)}}></Input>
+        <p className="font-medium text-gray-700">Course Thumbnail (if any)</p>
+        <div
+          className="w-full h-52 border-2 border-dashed rounded-lg border-gray-300 flex justify-center items-center hover:border-blue-500 focus-within:border-blue-500 transition-all ease-in-out"
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+          style={{ position: 'relative' }}
+        >
+          {(courseData.thumbURL) ? (
+            <img
+              src={courseData.thumbURL}
+              alt="Thumbnail Preview"
+              className="w-full h-full object-fit rounded-lg"
+            />
+          ) : (
+            <p className="text-gray-500 text-center">Drag & drop an image or click to select</p>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </div>
       </div>
+
       {/* Quiz Title Input */}
-      {/* NOTE: Update your provider to have a distinct key for quiz title if needed */}
       <div>
-        <p className="font-medium text-gray-700">Quiz Title</p>
+        <label className="font-medium text-gray-700">Quiz Title <span className="text-red-500">*</span></label>
         <input
           type="text"
           value={courseData.QuizTitle || ''}
+          required
           onChange={(e) => handleInputChange('QuizTitle', e.target.value)}
           placeholder="Enter the quiz title"
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -85,6 +132,7 @@ const CreateQuizBasicDetails = () => {
         <p className="font-medium text-gray-700">Description</p>
         <textarea
           rows={4}
+          title="Description of the quiz To gather more audience."
           value={courseData.Description || ''}
           onChange={(e) => handleInputChange('Description', e.target.value)}
           placeholder="Enter a description for your quiz"

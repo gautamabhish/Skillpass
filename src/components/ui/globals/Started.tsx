@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Link from 'next/link';
 const Started = () => {
   return (
     <div className='bg-[#f5f5f5] p-2'>
@@ -13,9 +13,9 @@ const Started = () => {
         <p className="text-xs text-white ">
           Join thousands of learners who have verified their skills through EduTrust.
         </p>
-        <button className=" py-3 px-4 bg-white text-blue-500 font-semibold rounded ">
+        <Link href='/explore' className=" py-3 px-4 bg-white text-blue-500 font-semibold rounded ">
           Get Started Now
-        </button>
+        </Link>
       </div>
     </section>
     </div>

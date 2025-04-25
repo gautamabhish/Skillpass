@@ -5,24 +5,29 @@ import { QuestionType } from '@/components/ui/globals/Input';
 export interface Duration {
   hours: number;
   minutes: number;
+  TimePerQuestion : Boolean;
 }
 
 export interface Question {
-  id: number;
+  id: string;
   type: QuestionType;
   text: string;
   points: number;
-  options?: string[];           // only for MCQs
-  correctAnswers?: number[];    // indices for correct options (for MCQs)
-  answerText?: string;          // for String type
-  fileURL?: string;             // for File type
+  options?: string[];
+  correctAnswers?: number[];
+  answerText?: string;
+  fileType?: string;
+  fileURL?: string;
+  fileBlob?: File;        // <--- temporarily holds selected file before upload
+  previewURL?: string;    // <--- for previewing the selected file
 }
 
-
 export interface CourseData {
+  courseURL: string | null;
   thumbURL: string | null;
   price: string | null;
   duration: Duration;
+
   totalPoints: number;
   Description:string | null;
   Tags: string[] | null;
@@ -30,6 +35,7 @@ export interface CourseData {
   Randomize: boolean;
   Questions:Question[];
   QuizTitle:string;
+  thumbFile?: File,
 }
 
 interface CourseCreateContextProps {
@@ -38,9 +44,12 @@ interface CourseCreateContextProps {
 }
 
 const defaultData: CourseData = {
+  courseURL: null,
   thumbURL: null,
+ 
   price: null,
-  duration: {hours:0,minutes:0},
+  duration: {hours:0,minutes:0,TimePerQuestion:false},
+
   totalPoints: 0,
   Description: '',
   Tags: null,

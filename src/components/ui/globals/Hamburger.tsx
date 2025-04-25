@@ -56,7 +56,14 @@ const HamburgerMenu = () => {
               </Link>
             </>
           ) : (
-            <Link href={'/sign-in'} className=" px-4 py-2 hover:bg-blue-700 bg-[#f5f5f5] text-center hover:text-white">Login</Link>
+         
+            <>
+              <Link href={'/'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Home</Link>
+              <Link href={'/explore'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Explore</Link>
+              <Link href={'/sign-in'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Login</Link>
+              <Link href={'/sign-in'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Sign Up</Link>
+              <Link href={'/about'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Support</Link>
+            </>
           )}
         </div>
       </div>

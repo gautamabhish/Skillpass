@@ -9,7 +9,7 @@ const Navbar = () => {
                 <li className='text-[#1658e7e8] font-semibold text-2xl pr-2.5'>EduTrust</li>
                <ul className='flex gap-12 items-center  ml-4 text-[#616975] '>
                <li className='hover:text-slate-700'><Link href={"/explore"}>Explore</Link></li>
-                <li className='hover:text-slate-700'><Link href={"/create-quiz"}>Create Test</Link></li>
+                {/* <li className='hover:text-slate-700'><Link href={"/create-quiz"}>Create Test</Link></li> */}
                 <li className='hover:text-slate-700 '><Link href='/about'>About</Link></li>
                </ul>
             </ul>

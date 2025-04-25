@@ -4,17 +4,29 @@ import Switch from '../ui/globals/Switch';
 import { useCourseCreate } from '@/Providers/CreateProvider';
 
 const TimeConfiguration = () => {
-  const{courseData,setCourseData} = useCourseCreate();
+  const { courseData, setCourseData } = useCourseCreate();
   const [enabled, setEnabled] = React.useState<boolean>(false);
-  
 
-  const handleDurationChange = (field: 'hours' | 'minutes', value: string) => {
-    if (!/^\d*$/.test(value)) return; // Only allow digits
+  // Sync TimePerQuestion with switch
+  React.useEffect(() => {
     setCourseData((prev) => ({
       ...prev,
-      [field]: value,
-    }))
-    
+      duration: {
+        ...prev.duration,
+        TimePerQuestion: enabled,
+      },
+    }));
+  }, [enabled]);
+
+  const handleDurationChange = (field: 'hours' | 'minutes', value: string) => {
+    if (!/^\d*$/.test(value)) return; // Only digits allowed
+    setCourseData((prev) => ({
+      ...prev,
+      duration: {
+        ...prev.duration,
+        [field]: value,
+      },
+    }));
   };
 
   return (
@@ -24,7 +36,9 @@ const TimeConfiguration = () => {
       <div className="flex flex-col md:flex-row gap-10">
         {/* Duration Input */}
         <div className="flex flex-col gap-2">
-          <label className="text-gray-700 font-medium">Duration</label>
+          <label className="text-gray-700 font-medium">
+            Duration <span className="text-red-500">*</span>
+          </label>
           <div className="flex gap-4">
             <div className="flex flex-col items-start">
               <span className="text-sm text-gray-500 mb-1">HH</span>
@@ -53,11 +67,13 @@ const TimeConfiguration = () => {
 
         {/* Switch */}
         <div className="flex flex-col justify-start gap-1">
-          <p className="text-gray-700 font-medium ">Time Per Question</p>
-          <Switch
-            checked={enabled}
-            onChange={() => setEnabled((prev)=>!prev)}
-          />
+          <p className="text-gray-700 font-medium">Time Per Question</p>
+          <Switch checked={enabled} onChange={() => setEnabled((prev) => !prev)} />
+          <p className="text-xs text-gray-500 mt-1">
+            {enabled
+              ? 'Each question will get equal time based on total duration.'
+              : 'Total duration will apply to the whole test.'}
+          </p>
         </div>
       </div>
     </div>

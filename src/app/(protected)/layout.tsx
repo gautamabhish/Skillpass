@@ -18,7 +18,9 @@ export default function ProtectedLayout({
     }
   }, [user, router]);
 
-  if (!user) return null; 
+  if (!user) return (
+   null
+  ); 
 
   return (
     <>

@@ -1,7 +1,8 @@
 'use client';
-
+import PriceInput from '../ui/create/PriceInput';
 import React, { useState } from 'react';
 import { Inter } from 'next/font/google';
+import { CourseData } from '@/Providers/CreateProvider';
 import { useCourseCreate } from '@/Providers/CreateProvider';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -12,9 +13,9 @@ const CreateQuizBasicDetails = () => {
   const { courseData, setCourseData } = useCourseCreate();
 
   // Handler to update any field in the provider state:
-  const handleInputChange = (
-    field: keyof typeof courseData,
-    value: string
+  const handleInputChange = <K extends keyof CourseData>(
+    field: K,
+    value: CourseData[K]
   ) => {
     setCourseData((prev) => ({
       ...prev,
@@ -74,8 +75,8 @@ const CreateQuizBasicDetails = () => {
         Basic Quiz Details
       </div>
 
-      {/* Course URL Input */}
-      <div>
+     <PriceInput courseData={courseData} handleInputChange={handleInputChange}></PriceInput>
+       <div> 
         <p className="font-medium text-gray-700">Course URL</p>
         <input
           type="text"

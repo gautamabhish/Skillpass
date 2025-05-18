@@ -6,7 +6,8 @@ export enum QuestionType {
   SingleCorrect = "Single Correct",
   MultiCorrect = "Multi Correct",
   Subjective = "Subjective",
-  File = "File"
+  File = "File",
+  
 }
 
 interface InputProps {
@@ -163,7 +164,7 @@ const Input: React.FC<InputProps> = ({
         className="text-red-500 hover:text-red-700"
         title="Remove option"
       >
-        <Image src="./delete.svg" alt="delete" width={20} height={20}></Image>
+        <Image src="/delete.svg" alt="delete" width={20} height={20}></Image>
       </button>
     )}
   </div>

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useCourseCreate } from "@/Providers/CreateProvider";
 import { v4 as uuidv4 } from 'uuid';
 import { Question } from "@/Providers/CreateProvider";
-import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
+// import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
 
 const AddQuestions: React.FC = () => {
   const { courseData, setCourseData } = useCourseCreate();
@@ -52,9 +52,9 @@ const AddQuestions: React.FC = () => {
         const updated = [...(prev.Questions ?? [])];
         updated[index] = {
           ...updated[index],
-          fileBlob: file,
-          previewURL: previewURL,
-          fileType: file.type,
+          AttachfileBlob: file,
+          AttachpreviewURL: previewURL,
+          AttachfileType: file.type,
         };
         return { ...prev, Questions: updated };
       });
@@ -99,8 +99,8 @@ const AddQuestions: React.FC = () => {
                 value={q.text || ''}
                 onChange={(e) => handleQuestionChange(index, 'text', e.target.value)}
               />
-              <label className="relative cursor-pointer group">
-                <Image src="/link.svg" alt="Attach" width={20} height={20} />
+              <label className="relative cursor-pointer group" >
+                <Image src="/link.svg" alt="Attach" width={20} height={20} title="Add attachments"/>
                 <span className="absolute hidden hover:visible bottom-full mb-1 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition">
                   Attachments
                 </span>
@@ -113,22 +113,22 @@ const AddQuestions: React.FC = () => {
               </label>
             </div>
 
-            {q.previewURL && (
+            {q.AttachpreviewURL && (
   <div className="mt-2">
-    {q.fileType?.includes('audio') ? (
-      <audio controls src={q.previewURL} />
-    ) : q.fileType?.includes('video') ? (
-      <video controls width="300" src={q.previewURL} />
-    ) : q.fileType?.includes('image') ? (
+    {q.AttachfileType?.includes('audio') ? (
+      <audio controls src={q.AttachpreviewURL} />
+    ) : q.AttachfileType?.includes('video') ? (
+      <video controls width="300" src={q.AttachpreviewURL} />
+    ) : q.AttachfileType?.includes('image') ? (
       <Image
-        src={q.previewURL}
+        src={q.AttachpreviewURL}
         alt="Preview"
         width={300}
         height={200}
         className="object-cover mt-2"
       />
     ) : (
-      <p className="text-sm text-gray-500">Preview: {q.fileType}</p>
+      <p className="text-sm text-gray-500">Preview: {q.AttachfileType}</p>
     )}
   </div>
 )}
@@ -141,11 +141,14 @@ const AddQuestions: React.FC = () => {
                   handleQuestionChange(index, 'type', e.target.value as QuestionType)
                 }
               >
-                {Object.values(QuestionType).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+               {Object.values(QuestionType).map((type) =>
+  type !== QuestionType.File && type !== QuestionType.Subjective && (
+    <option key={type} value={type}>
+      {type.replace(/([A-Z])/g, ' $1').trim()}
+    </option>
+  )
+)}
+
               </select>
 
               <input

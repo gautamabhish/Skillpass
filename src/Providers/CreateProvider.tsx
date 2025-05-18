@@ -13,13 +13,13 @@ export interface Question {
   type: QuestionType;
   text: string;
   points: number;
-  options?: string[];
-  correctAnswers?: number[];
+  options: string[];
+  correctAnswers: number[];
   answerText?: string;
-  fileType?: string;
-  fileURL?: string;
-  fileBlob?: File;        // <--- temporarily holds selected file before upload
-  previewURL?: string;    // <--- for previewing the selected file
+  AttachfileType?: string;
+  AttachfileURL?: string;
+  AttachfileBlob?: File;        // <--- temporarily holds selected file before upload
+  AttachpreviewURL?: string;    // <--- for previewing the selected file
 }
 
 export interface CourseData {
@@ -36,6 +36,8 @@ export interface CourseData {
   Questions:Question[];
   QuizTitle:string;
   thumbFile?: File,
+  currency: 'INR' | 'USD' | 'EUR' | null;
+  Price: Number | null;
 }
 
 interface CourseCreateContextProps {
@@ -53,10 +55,12 @@ const defaultData: CourseData = {
   totalPoints: 0,
   Description: '',
   Tags: null,
+  currency: 'INR',
   AllowBacktrack: false,
   Randomize: false,
   Questions:[],
   QuizTitle:'',
+  Price: 0,
 };
 
 const CourseCreateContext = createContext<CourseCreateContextProps | null>(null);

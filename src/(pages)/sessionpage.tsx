@@ -233,13 +233,13 @@ export default function JEEStyleQuizInterface() {
           </div>
           
           {/* Question Navigation */}
-          <div className="grid grid-cols-8 gap-2">
+          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2">
             {Array.from({ length: totalQuestions }, (_, index) => (
               <button
                 key={index}
                 onClick={() => handleNavigation(index + 1)}
                 className={clsx(
-                  'w-10 h-10 rounded-full',
+                  'w-10 h-10  rounded-md ',
                   getStatusColor(getQuestionStatus(index + 1))
                 )}
               >

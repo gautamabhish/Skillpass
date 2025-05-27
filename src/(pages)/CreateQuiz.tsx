@@ -19,7 +19,7 @@ const CreateQuiz = () => {
   const {courseData,setCourseData} = useCourseCreate();
 
   const validateCourseData = () => {
-    if (!courseData.QuizTitle ) {
+    if (!courseData.title ) {
       setMessage((prev) => [ 'Quiz title is required']);
       setShowModal(true);
       return false;
@@ -88,9 +88,9 @@ const CreateQuiz = () => {
             <button className="px-4 py-2 text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 transition">
               Preview
             </button>
-            <button className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition" onClick={handleSubmit}>
+            {/* <button className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition" onClick={handleSubmit}>
               Save Draft
-            </button>
+            </button> */}
             <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition" >
               Publish Quiz
             </button>

@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useCourseCreate } from "@/Providers/CreateProvider";
 import { v4 as uuidv4 } from 'uuid';
 import { Question } from "@/Providers/CreateProvider";
-// import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
 
 const AddQuestions: React.FC = () => {
   const { courseData, setCourseData } = useCourseCreate();
@@ -16,7 +15,8 @@ const AddQuestions: React.FC = () => {
       id: uuidv4(),
       type: QuestionType.MultiCorrect,
       text: '',
-      points: 0,
+      points: 1,
+      negPoints: 0,
       options: ["", ""],
       correctAnswers: [],
     };
@@ -30,7 +30,21 @@ const AddQuestions: React.FC = () => {
   const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
     setCourseData(prev => {
       const updated = [...(prev.Questions ?? [])];
-      updated[index] = { ...updated[index], [field]: value };
+      const question = { ...updated[index] };
+
+      if (field === "points") {
+        const parsed = parseInt(value);
+        if (isNaN(parsed) || parsed < 1) return prev;
+        question.points = parsed;
+      } else if (field === "negPoints") {
+        const parsed = parseInt(value);
+        if (isNaN(parsed) || parsed > 0) return prev;
+        question.negPoints = parsed;
+      } else {
+        question[field] = value;
+      }
+
+      updated[index] = question;
       return { ...prev, Questions: updated };
     });
   };
@@ -44,10 +58,10 @@ const AddQuestions: React.FC = () => {
 
   const handleInputChange = (index: number, inputData: any) => {
     const file = inputData?.target?.files?.[0];
-  
+
     if (file) {
       const previewURL = URL.createObjectURL(file);
-  
+
       setCourseData(prev => {
         const updated = [...(prev.Questions ?? [])];
         updated[index] = {
@@ -59,7 +73,6 @@ const AddQuestions: React.FC = () => {
         return { ...prev, Questions: updated };
       });
     } else {
-      // Handle options and correctAnswers
       setCourseData(prev => {
         const updated = [...(prev.Questions ?? [])];
         updated[index] = {
@@ -71,7 +84,16 @@ const AddQuestions: React.FC = () => {
       });
     }
   };
-  
+
+  // Optional: Validate questions before submission
+  const validateQuestion = (q: Question): string | null => {
+    if (!q.text?.trim()) return "Question text is required.";
+    if (q.points < 1) return "Points must be at least 1.";
+    if (q.negPoints > 0) return "Negative points must be 0 or less.";
+    if (!Array.isArray(q.options) || q.options.length < 2) return "At least 2 options are required.";
+    if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length === 0) return "At least one correct answer is required.";
+    return null;
+  };
 
   return (
     <div className="bg-white p-4">
@@ -99,8 +121,8 @@ const AddQuestions: React.FC = () => {
                 value={q.text || ''}
                 onChange={(e) => handleQuestionChange(index, 'text', e.target.value)}
               />
-              <label className="relative cursor-pointer group" >
-                <Image src="/link.svg" alt="Attach" width={20} height={20} title="Add attachments"/>
+              <label className="relative cursor-pointer group">
+                <Image src="/link.svg" alt="Attach" width={20} height={20} title="Add attachments" />
                 <span className="absolute hidden hover:visible bottom-full mb-1 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition">
                   Attachments
                 </span>
@@ -114,24 +136,24 @@ const AddQuestions: React.FC = () => {
             </div>
 
             {q.AttachpreviewURL && (
-  <div className="mt-2">
-    {q.AttachfileType?.includes('audio') ? (
-      <audio controls src={q.AttachpreviewURL} />
-    ) : q.AttachfileType?.includes('video') ? (
-      <video controls width="300" src={q.AttachpreviewURL} />
-    ) : q.AttachfileType?.includes('image') ? (
-      <Image
-        src={q.AttachpreviewURL}
-        alt="Preview"
-        width={300}
-        height={200}
-        className="object-cover mt-2"
-      />
-    ) : (
-      <p className="text-sm text-gray-500">Preview: {q.AttachfileType}</p>
-    )}
-  </div>
-)}
+              <div className="mt-2">
+                {q.AttachfileType?.includes('audio') ? (
+                  <audio controls src={q.AttachpreviewURL} />
+                ) : q.AttachfileType?.includes('video') ? (
+                  <video controls width="300" src={q.AttachpreviewURL} />
+                ) : q.AttachfileType?.includes('image') ? (
+                  <Image
+                    src={q.AttachpreviewURL}
+                    alt="Preview"
+                    width={300}
+                    height={200}
+                    className="object-cover mt-2"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-500">Preview: {q.AttachfileType}</p>
+                )}
+              </div>
+            )}
 
             <div className="flex items-center gap-4 my-3">
               <select
@@ -141,29 +163,40 @@ const AddQuestions: React.FC = () => {
                   handleQuestionChange(index, 'type', e.target.value as QuestionType)
                 }
               >
-               {Object.values(QuestionType).map((type) =>
-  type !== QuestionType.File && type !== QuestionType.Subjective && (
-    <option key={type} value={type}>
-      {type.replace(/([A-Z])/g, ' $1').trim()}
-    </option>
-  )
-)}
-
+                {Object.values(QuestionType).map((type) =>
+                  type !== QuestionType.File && type !== QuestionType.Subjective && (
+                    <option key={type} value={type}>
+                      {type.replace(/([A-Z])/g, ' $1').trim()}
+                    </option>
+                  )
+                )}
               </select>
 
               <input
-  type="number"
-  placeholder="Points"
-  className="w-24 px-2 py-1 border border-[#b7bbbe] rounded text-sm"
-  value={q.points}
-  onChange={(e) =>
-    handleQuestionChange(index, 'points', Math.max(0, parseInt(e.target.value || '0')))
-  }
-  min="1"
-  step="1"
-  title={`Assigned Points: ${q.points}`} // Tooltip text on hover
-/>
+                type="number"
+                placeholder="Points"
+                className="w-24 px-2 py-1 border border-[#b7bbbe] rounded text-sm"
+                value={q.points}
+                onChange={(e) =>
+                  handleQuestionChange(index, 'points', e.target.value)
+                }
+                min="1"
+                step="1"
+                title={`Assigned Points: ${q.points}`}
+              />
 
+              <input
+                type="number"
+                placeholder="Neg. Points"
+                className="w-28 px-2 py-1 border border-[#b7bbbe] text-red-500 rounded text-sm"
+                value={q.negPoints ?? 0}
+                onChange={(e) =>
+                  handleQuestionChange(index, 'negPoints', e.target.value)
+                }
+                max="0"
+                step="1"
+                title={`Negative Points: ${q.negPoints}`}
+              />
             </div>
 
             <Input

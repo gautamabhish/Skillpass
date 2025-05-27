@@ -4,16 +4,19 @@ import React, { createContext, useState, ReactNode, useContext } from 'react';
 import { QuestionType } from '@/components/ui/globals/Input';
 
 export interface Duration {
-  hours: number;
-  minutes: number;
+  hours: string;
+  minutes: string;
+  totalMinutes: number;
   TimePerQuestion: boolean;
 }
+
 
 export interface Question {
   id: string;
   type: QuestionType;
   text: string;
   points: number;
+  negPoints: number;
   options: string[];
   correctAnswers: number[];
   answerText?: string;
@@ -26,7 +29,8 @@ export interface Question {
 export interface CourseData {
   title: string;
   description: string;
-  duration: Duration;
+  duration: number;
+  TimePerQuestion: boolean;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   creatorId: string;
   courseId?: string | null;
@@ -51,7 +55,8 @@ interface CourseCreateContextProps {
 const defaultData: CourseData = {
   title: '',
   description: '',
-  duration: { hours: 0, minutes: 0, TimePerQuestion: false },
+  duration: 0,
+  TimePerQuestion: false,
   difficulty: 'Easy',
   creatorId: '',
   courseId: null,

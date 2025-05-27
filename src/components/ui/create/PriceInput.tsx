@@ -4,8 +4,8 @@ import Select from 'react-select';
 import { CourseData } from '@/Providers/CreateProvider';
 const currencyOptions = [
   { value: 'INR', label: '🇮🇳 INR (₹)', symbol: '₹' },
-  { value: 'USD', label: '🇺🇸 USD ($)', symbol: '$' },
-  { value: 'EUR', label: '🇪🇺 EUR (€)', symbol: '€' },
+  // { value: 'USD', label: '🇺🇸 USD ($)', symbol: '$' },
+  // { value: 'EUR', label: '🇪🇺 EUR (€)', symbol: '€' },
 ];
 
 const PriceInput = ({ courseData, handleInputChange }:{courseData:CourseData , handleInputChange:any}) => {

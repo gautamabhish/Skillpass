@@ -47,6 +47,7 @@ const HamburgerMenu = () => {
  <Link href={'/explore'} className="text-left  bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Explore</Link>
               <Link href={'/create-quiz'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Create Quiz</Link>
               {/* <Link href={'/session'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Take Quiz</Link> */}
+              <Link href={"/share-and-earn"} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Share and Earn  </Link>
               < Link href={'/about'} className="text-left bg-[#f5f5f5] px-4 py-2 hover:bg-blue-700 hover:text-white">Support</Link>
               <Link href={'/'}
                 onClick={signOut}

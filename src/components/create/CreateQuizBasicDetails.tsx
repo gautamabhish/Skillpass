@@ -120,9 +120,9 @@ const CreateQuizBasicDetails = () => {
         <label className="font-medium text-gray-700">Quiz Title <span className="text-red-500">*</span></label>
         <input
           type="text"
-          value={courseData.QuizTitle || ''}
+          value={courseData.title || ''}
           required
-          onChange={(e) => handleInputChange('QuizTitle', e.target.value)}
+          onChange={(e) => handleInputChange('title', e.target.value)}
           placeholder="Enter the quiz title"
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
@@ -134,8 +134,8 @@ const CreateQuizBasicDetails = () => {
         <textarea
           rows={4}
           title="Description of the quiz To gather more audience."
-          value={courseData.Description || ''}
-          onChange={(e) => handleInputChange('Description', e.target.value)}
+          value={courseData.description || ''}
+          onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Enter a description for your quiz"
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
         />

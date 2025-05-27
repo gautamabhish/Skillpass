@@ -17,7 +17,7 @@ const QuizSettings = () => {
           <div className="text-lg font-bold text-gray-700">Allow Backtracking</div>
           <div className="text-sm text-gray-500">Let learners navigate back to previous questions</div>
         </div>
-        <Switch checked={courseData.AllowBacktrack} onChange={() => setCourseData(prev => ({...prev,AllowBacktrack:!prev.AllowBacktrack}))} />
+        <Switch checked={courseData.backtrack} onChange={() => setCourseData(prev => ({...prev,backtrack:!prev.backtrack}))} />
       </div>
 
       {/* Randomize Option */}
@@ -26,7 +26,7 @@ const QuizSettings = () => {
           <div className="text-lg font-bold text-gray-700">Randomize Questions</div>
           <div className="text-sm text-gray-500">Shuffle the order of questions for each learner</div>
         </div>
-        <Switch checked={courseData.Randomize} onChange={() => setCourseData(prev =>({...prev,Randomize:!prev.Randomize}) )} />
+        <Switch checked={courseData.randomize} onChange={() => setCourseData(prev =>({...prev,randomize:!prev.randomize}) )} />
       </div>
     </div>
   );

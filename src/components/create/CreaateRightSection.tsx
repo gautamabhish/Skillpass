@@ -59,7 +59,7 @@ const CreaateRightSection = () => {
       </div>
       <div className="flex justify-between">
         <span>Duration</span>
-        <span className='font-bold'>{courseData.duration.hours || '00'}:{courseData.duration.minutes || '00'}</span>
+        <span className='font-bold'>{courseData.duration || '00'} minutes</span>
       </div>
     </div>
   </div>

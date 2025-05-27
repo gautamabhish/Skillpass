@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const res = await axios.post('http://localhost:5000/api/users/signin', { email, password });
+    const res = await axios.post('http://localhost:5000/api/users/auth/login', { email, password });
     console.log(res)
     setUser(res.data.user);
     localStorage.setItem('user', JSON.stringify(res.data.user));
@@ -49,12 +49,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signUp = async (name: string, email: string, password: string):Promise<number> => {
-    const res = await axios.post('http://localhost:5000/api/users/signup', { name, email, password });
+    const res = await axios.post('http://localhost:5000/api/users/auth/register', { name, email, password });
     return res.status;
   };
 
   const signInWithGoogle = async (credential: string) => {
-    const res = await axios.post('http://localhost:5000/api/users/google', { token: credential });
+    const res = await axios.post('http://localhost:5000/api/users/auth/google', { token: credential });
     setUser(res.data.user);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     router.push('/dashboard');

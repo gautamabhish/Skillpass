@@ -1,45 +1,87 @@
-import React from 'react'
+import React from 'react';
 import Link from 'next/link';
-import { FaRegClock } from "react-icons/fa6";
+import { FaRegClock } from 'react-icons/fa6';
 import clsx from 'clsx';
 
 interface cardData {
-  image: string,
-  tag: string,
-  color: string ,
-  title: string,
-  description: string,
-  time: number|null,
+  image: string;
+  tag: string;
+  color: string;
+  title: string;
+  description: string;
+  time: number | null;
+  verified?: boolean;
+  authorName?: string;
+  authorRole?: string;
+  authorAvatar?: string;
 }
 
 function RecommendCard(props: cardData) {
-  const { image, tag, color, title, description, time } = props
+  const {
+    image,
+    tag,
+    color,
+    title,
+    description,
+    time,
+    verified = true,
+    authorName = 'John Doe',
+    authorRole = 'Course Creator',
+    authorAvatar = '/avatar-placeholder.png',
+  } = props;
+
   return (
-    <div className=" bg-white shadow-md rounded-xl p-4 flex flex-col gap-4 min-h-[350px] max-h-fit w-[300px] md:min-h-fit md:w-[400px] hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer">
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden transition transform hover:opacity-80 duration-300 w-[300px] md:w-[400px]">
       <div className="relative">
-        <img src={image} alt={title} className="rounded-md object-cover w-full h-42 md:h-52" />
-        <span className={clsx(
-          'absolute top-2 right-2 text-white font-semibold px-2 py-1 rounded-lg text-sm',
-          color
-        )}>
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-44 md:h-52 object-cover"
+        />
+        {verified && (
+          <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
+            Verified
+          </span>
+        )}
+        <span
+          className={clsx(
+            'absolute bottom-2 left-2 text-white text-xs px-2 py-1 rounded-md',
+            color
+          )}
+        >
           {tag}
         </span>
       </div>
-      <div className="flex flex-col gap-2">
-        <p className="font-bold text-xl overflow-ellipsis">{title}</p>
-        <p className="text-sm text-gray-600 line-clamp-1">{description}</p>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="flex items-center gap-2 text-sm text-gray-500">
-          <FaRegClock /> {time} weeks
-        </span>
-        <Link href="#" className="text-blue-500 hover:underline hover:text-blue-600">
-          Get Now
-        </Link>
+
+      <div className="p-4 space-y-2">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <img
+            src={authorAvatar}
+            alt="Author"
+            className="w-6 h-6 rounded-full object-cover"
+          />
+          <span>{authorName}</span>
+          <span className="text-xs text-gray-400">• {authorRole}</span>
+        </div>
+
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <p className="text-sm text-gray-500 line-clamp-2">{description}</p>
+
+        <div className="flex items-center justify-between pt-2 text-sm text-gray-400">
+          <span className="flex items-center gap-1">
+            <FaRegClock />
+            {time ? `${time} weeks` : 'N/A'}
+          </span>
+          <Link
+            href="#"
+            className="text-blue-500 hover:text-blue-600 font-medium"
+          >
+            Get Now
+          </Link>
+        </div>
       </div>
     </div>
-
-  )
+  );
 }
 
-export default RecommendCard
+export default RecommendCard;

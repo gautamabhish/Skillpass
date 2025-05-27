@@ -35,7 +35,7 @@ export const Trending = () => {
 
   return (
     <div className="mx-4">
-      <div className={clsx('font-bold text-3xl  z-[100]',inter.className,'px-4')}>Creating a Buzz..</div>
+      <div className={clsx('font-bold text-3xl  z-[100]',inter.className,'px-4')}></div>
 
     <div className="flex  gap-6 px-4 py-2 ">
       

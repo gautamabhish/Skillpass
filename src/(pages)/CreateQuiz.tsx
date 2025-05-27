@@ -15,19 +15,7 @@ const inter = Inter({ subsets: ['latin'] })
 const CreateQuiz = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [message, setMessage] = React.useState<string[]>([]);
-//  courseURL: string | null;
-//   thumbURL: string | null;
-//   price: string | null;
-//   duration: Duration;
 
-//   totalPoints: number;
-//   Description:string | null;
-//   Tags: string[] | null;
-//   AllowBacktrack: boolean;
-//   Randomize: boolean;
-//   Questions:Question[];
-//   QuizTitle:string;
-//   thumbFile?: File,
   const {courseData,setCourseData} = useCourseCreate();
 
   const validateCourseData = () => {

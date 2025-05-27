@@ -2,10 +2,11 @@
 
 import React, { createContext, useState, ReactNode, useContext } from 'react';
 import { QuestionType } from '@/components/ui/globals/Input';
+
 export interface Duration {
   hours: number;
   minutes: number;
-  TimePerQuestion : Boolean;
+  TimePerQuestion: boolean;
 }
 
 export interface Question {
@@ -18,26 +19,27 @@ export interface Question {
   answerText?: string;
   AttachfileType?: string;
   AttachfileURL?: string;
-  AttachfileBlob?: File;        // <--- temporarily holds selected file before upload
-  AttachpreviewURL?: string;    // <--- for previewing the selected file
+  AttachfileBlob?: File;
+  AttachpreviewURL?: string;
 }
 
 export interface CourseData {
-  courseURL: string | null;
-  thumbURL: string | null;
-  price: string | null;
+  title: string;
+  description: string;
   duration: Duration;
-
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  creatorId: string;
+  courseId?: string | null;
+  courseURL?: string | null;
+  thumbURL?: string | null;
+  price: number;
+  backtrack: boolean;
+  randomize: boolean;
   totalPoints: number;
-  Description:string | null;
   Tags: string[] | null;
-  AllowBacktrack: boolean;
-  Randomize: boolean;
-  Questions:Question[];
-  QuizTitle:string;
-  thumbFile?: File,
+  Questions: Question[];
+  thumbFile?: File;
   currency: 'INR' | 'USD' | 'EUR' | null;
-  Price: Number | null;
 }
 
 interface CourseCreateContextProps {
@@ -45,22 +47,24 @@ interface CourseCreateContextProps {
   setCourseData: React.Dispatch<React.SetStateAction<CourseData>>;
 }
 
+// ✅ Corrected defaultData
 const defaultData: CourseData = {
+  title: '',
+  description: '',
+  duration: { hours: 0, minutes: 0, TimePerQuestion: false },
+  difficulty: 'Easy',
+  creatorId: '',
+  courseId: null,
   courseURL: null,
   thumbURL: null,
- 
-  price: null,
-  duration: {hours:0,minutes:0,TimePerQuestion:false},
-
+  price: 0,
+  backtrack: false,
+  randomize: false,
   totalPoints: 0,
-  Description: '',
   Tags: null,
+  Questions: [],
+  thumbFile: undefined,
   currency: 'INR',
-  AllowBacktrack: false,
-  Randomize: false,
-  Questions:[],
-  QuizTitle:'',
-  Price: 0,
 };
 
 const CourseCreateContext = createContext<CourseCreateContextProps | null>(null);

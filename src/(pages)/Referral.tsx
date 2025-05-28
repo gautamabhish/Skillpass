@@ -5,6 +5,7 @@ import { FaRupeeSign } from 'react-icons/fa';
 import Link from 'next/link';
 import sharenearn from '../../public/sharenearn.png';
 import Navbar from '@/components/ui/globals/Navbar'
+import NavbarLogged from '@/components/ui/globals/NavbarLogged';
 
 interface Referral {
   referredUser: { name: string } | null;
@@ -111,7 +112,7 @@ const ReferralEarningsPage: React.FC = () => {
     <div>
 
     
-    <Navbar></Navbar>
+    <NavbarLogged></NavbarLogged>
     <div className="relative flex size-full min-h-screen flex-col bg-[#f8f9fc] group/design-root overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
       <div className="layout-container flex h-full grow flex-col">
         <div className="px-40 flex flex-1 justify-center py-5">

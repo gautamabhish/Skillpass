@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { IconType } from 'react-icons';
 import Card from '@/components/ui/dashboard/GenCard'
 import { AiFillFire } from "react-icons/ai";
-import { FaGraduationCap } from "react-icons/fa";
+import { FaGraduationCap, FaRupeeSign } from "react-icons/fa";
 import { LiaCertificateSolid } from "react-icons/lia";
 import { FaStar } from "react-icons/fa6";
 
@@ -24,10 +24,10 @@ const cardData: CardProps[] = [
     color: "yellow",
   },
   {
-    title: "Course Completion",
-    number: "85%",
-    subtext: "Average completion rate",
-    icon : FaGraduationCap,
+    title: "Total Earnings",  
+    number: "85",
+    subtext: "in INR",
+    icon : FaRupeeSign,
     color: "blue",
   },
   {

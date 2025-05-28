@@ -1,12 +1,13 @@
 'use client'
 import { useAuth } from '@/Providers/AuthProvider';
-import React, { useState, useRef, useEffect, ReactHTMLElement } from 'react';
+import React, { useState, useRef, useEffect, ReactHTMLElement, use } from 'react';
 import Link from 'next/link';
+// import { useRef } from 'react';
 import HamburgerMenu from './Hamburger';
 const NavbarLogged = () => {
 
 
-
+  const profilePicRef = useRef<HTMLInputElement>(null);
   // const {signOut} = useAuth()
 
   return (
@@ -37,12 +38,19 @@ const NavbarLogged = () => {
         </div>
 
         {/* Avatar and Dropdown */}
+        <input type="file" className='hidden' ref={profilePicRef} />
         <div className="relative" >
           <img
            
             src="./window.svg"
             alt="User Avatar"
             className="object-cover rounded-full h-8 w-8 cursor-pointer"
+            onClick={() => {
+              // Handle avatar click, e.g., open profile dropdown
+              if (profilePicRef.current) {
+                profilePicRef.current.click();
+              }
+            }}
           />
 
           

@@ -1,30 +1,25 @@
 'use client';
 
-import { useAuth } from "@/Providers/AuthProvider";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter } from 'next/navigation';
+import { useEffect, ReactNode } from 'react';
+import { useAppSelector } from '@/store/hooks';
 
-export default function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user } = useAuth();
+export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const user = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.id) {
+      // Not logged in → back to home or login
       router.push('/');
     }
   }, [user, router]);
 
-  if (!user) return (
-   null
-  ); 
+  // While we’re checking—don’t render anything
+  if (!user || !user.id) {
+    return null;
+  }
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  // Once we know there is a user:
+  return <>{children}</>;
 }

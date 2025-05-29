@@ -8,6 +8,7 @@ import QuizSettings from '@/components/create/QuizSettings'
 import AddQuestions from '@/components/create/AddQuestions'
 import { useCourseCreate } from '@/Providers/CreateProvider'
 import AlertModal from '@/components/ui/modals/alertModal'
+import { useRouter } from 'next/navigation'
 import { handleImgUpload,handleAudioUpload,handleVideoUpload } from '@/lib/cloudinaryUpload'
 // import { s } from 'framer-motion/client'
 
@@ -15,7 +16,7 @@ const inter = Inter({ subsets: ['latin'] })
 const CreateQuiz = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [message, setMessage] = React.useState<string[]>([]);
-
+  const router = useRouter();
   const {courseData,setCourseData} = useCourseCreate();
 
   const validateCourseData = () => {
@@ -60,7 +61,10 @@ const CreateQuiz = () => {
         else console.log('No file to upload');
       }
     )
-      console.log(courseData);
+      const res = await axios.post('/api/quiz/create', courseData, {withCredentials: true});
+      if (res.status === 200) {
+        
+      }
   }
   
   return (
@@ -91,7 +95,7 @@ const CreateQuiz = () => {
             {/* <button className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition" onClick={handleSubmit}>
               Save Draft
             </button> */}
-            <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition" >
+            <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition" onClick={handleSubmit}>
               Publish Quiz
             </button>
           </div>

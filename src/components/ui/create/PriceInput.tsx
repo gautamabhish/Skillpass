@@ -36,17 +36,18 @@ const PriceInput = ({ courseData, handleInputChange }:{courseData:CourseData , h
           />
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 items-center">
           <CurrencyInput
           title='0 means free'
             className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
             name="price"
-            placeholder="Enter the price"
+            placeholder="Enter the price, 0 means free"
             decimalsLimit={2}
-            value={courseData.price || 0}
+            value={courseData.price }
             onValueChange={handlePriceChange}
             prefix={selectedCurrency.symbol}
           />
+        
         </div>
       </div>
 

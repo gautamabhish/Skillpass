@@ -21,7 +21,7 @@ export default function SignInPage() {
     try {
       const resultAction = await dispatch(signIn({ email, password }));
       if (signIn.fulfilled.match(resultAction)) {
-        router.push('/dashboard');
+        router.push('/explore');
       } else {
         throw new Error('Login failed');
       }

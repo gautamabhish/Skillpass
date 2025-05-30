@@ -9,6 +9,7 @@ import AddQuestions from '@/components/create/AddQuestions'
 import { useCourseCreate } from '@/Providers/CreateProvider'
 import AlertModal from '@/components/ui/modals/alertModal'
 import { useRouter } from 'next/navigation'
+import { useAppSelector } from '@/store/hooks'
 import { handleImgUpload,handleAudioUpload,handleVideoUpload } from '@/lib/cloudinaryUpload'
 // import { s } from 'framer-motion/client'
 
@@ -17,6 +18,7 @@ const CreateQuiz = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [message, setMessage] = React.useState<string[]>([]);
   const router = useRouter();
+  const userId = useAppSelector((state) => state.user.id);
   const {courseData,setCourseData} = useCourseCreate();
 
   const validateCourseData = () => {
@@ -61,11 +63,39 @@ const CreateQuiz = () => {
         else console.log('No file to upload');
       }
     )
-      const res = await axios.post('/api/quiz/create', courseData, {withCredentials: true});
-      if (res.status === 200) {
-        
-      }
+    // Assume `courseData` is your state object with exactly the shape your API expects
+const payload = {
+  title: courseData.title,
+  description: courseData.description,
+  duration: courseData.duration,      // number of minutes
+  difficulty: courseData.difficulty,  // 'Easy' | 'Medium' | 'Hard'
+  creatorId: userId,         // your user ID
+  courseId: courseData.courseId,      // or null
+  courseURL: courseData.courseURL,    // or null
+  thumbURL: courseData.thumbURL,      // or null
+  price: Number(courseData.price),
+  backtrack: courseData.backtrack,
+  randomize: courseData.randomize,
+  Tags: courseData.Tags,              // string[] | null
+  Questions: courseData.Questions,    // your array of questions
+  currency: courseData.currency,      // e.g. 'INR'
+};
+
+try {
+  const res = await axios.post(
+    'http://localhost:5000/api/quiz/create',
+    payload,
+    { withCredentials: true }
+  );
+  if (res.status === 200) {
+    // e.g. navigate to the new quiz page or show success
+    router.push(`/create-quiz`);
   }
+} catch (err) {
+  console.error('Quiz creation failed', err);
+}
+  }
+
   
   return (
     <div className={`bg-[#f9fafb] flex justify-around p-6 gap-2 ${inter.className}`}>

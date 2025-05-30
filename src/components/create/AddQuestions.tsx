@@ -15,7 +15,7 @@ const AddQuestions: React.FC = () => {
       id: uuidv4(),
       type: QuestionType.MultiCorrect,
       text: '',
-      points: 1,
+      points: 1, // string to allow flexible typing
       negPoints: 0,
       options: ["", ""],
       correctAnswers: [],
@@ -27,27 +27,22 @@ const AddQuestions: React.FC = () => {
     }));
   };
 
-  const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
-    setCourseData(prev => {
-      const updated = [...(prev.Questions ?? [])];
-      const question = { ...updated[index] };
+const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
+  setCourseData(prev => {
+    const updated = [...(prev.Questions ?? [])];
+    const question = { ...updated[index] };
 
-      if (field === "points") {
-        const parsed = parseInt(value);
-        if (isNaN(parsed) || parsed < 1) return prev;
-        question.points = parsed;
-      } else if (field === "negPoints") {
-        const parsed = parseInt(value);
-        if (isNaN(parsed) || parsed > 0) return prev;
-        question.negPoints = parsed;
-      } else {
-        question[field] = value;
-      }
+    if (field === "points" || field === "negPoints") {
+      const parsed = parseFloat(value);
+      question[field] = isNaN(parsed) ? 0 : parsed; // fallback to 0 or keep previous if needed
+    } else {
+      question[field] = value;
+    }
 
-      updated[index] = question;
-      return { ...prev, Questions: updated };
-    });
-  };
+    updated[index] = question;
+    return { ...prev, Questions: updated };
+  });
+};
 
   const handleDeleteQuestion = (id: string) => {
     setCourseData(prev => ({
@@ -85,11 +80,10 @@ const AddQuestions: React.FC = () => {
     }
   };
 
-  // Optional: Validate questions before submission
   const validateQuestion = (q: Question): string | null => {
     if (!q.text?.trim()) return "Question text is required.";
     if (q.points < 1) return "Points must be at least 1.";
-    if (q.negPoints > 0) return "Negative points must be 0 or less.";
+    if (q.negPoints   < 0) return "Negative points must be 0 or less.";
     if (!Array.isArray(q.options) || q.options.length < 2) return "At least 2 options are required.";
     if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length === 0) return "At least one correct answer is required.";
     return null;
@@ -173,28 +167,26 @@ const AddQuestions: React.FC = () => {
               </select>
 
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="Points"
                 className="w-24 px-2 py-1 border border-[#b7bbbe] rounded text-sm"
                 value={q.points}
                 onChange={(e) =>
                   handleQuestionChange(index, 'points', e.target.value)
                 }
-                min="1"
-                step="1"
                 title={`Assigned Points: ${q.points}`}
               />
 
               <input
-                type="number"
-                placeholder="Neg. Points"
-                className="w-28 px-2 py-1 border border-[#b7bbbe] text-red-500 rounded text-sm"
-                value={q.negPoints ?? 0}
+                type="text"
+                inputMode="numeric"
+                placeholder="0"
+                className="w-28 px-2 py-1 border border-[#b7bbbe] text-red-500 rounded text-sm font-bold"
+                value={q.negPoints}
                 onChange={(e) =>
                   handleQuestionChange(index, 'negPoints', e.target.value)
                 }
-                max="0"
-                step="1"
                 title={`Negative Points: ${q.negPoints}`}
               />
             </div>

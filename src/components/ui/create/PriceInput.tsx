@@ -14,7 +14,7 @@ const PriceInput = ({ courseData, handleInputChange }:{courseData:CourseData , h
 
   const handlePriceChange = (value: string | undefined) => {
     if (!value || parseFloat(value) < 0) {
-      setPriceError('Price must be a number greater than 0');
+      setPriceError('valid price is required');
     } else {
       setPriceError('');
     }

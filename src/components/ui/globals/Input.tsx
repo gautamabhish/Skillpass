@@ -4,14 +4,14 @@ import Image from "next/image";
 
 export enum QuestionType {
   SingleCorrect = "Single Correct",
-  MultiCorrect = "Multi Correct",
+  MultiCorrect = "Multiple Correct",
   Subjective = "Subjective",
   File = "File",
   
 }
 
 interface InputProps {
-  type?: QuestionType;
+  type: QuestionType;
   label?: string;
   value?: string;
   onChange: (e: any) => void;

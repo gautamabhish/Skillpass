@@ -64,7 +64,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
           >
             Sign Up
           </button>
@@ -74,7 +74,7 @@ export default function RegisterPage() {
           <Link 
             href="/sign-in"
             
-            className="ml-2 text-blue-600 font-semibold hover:underline"
+            className="ml-2 text-blue-600 font-semibold hover:underline "
           >
             Sign In
           </Link>

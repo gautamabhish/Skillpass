@@ -1,8 +1,31 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import heroImg from '/public/heroleft.png';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+
 const Hero = () => {
+  const router = useRouter();
+  const user = useAppSelector(state => state.user); // Replace with your selector
+
+  const handleTakeQuiz = () => {
+    if (user) {
+      router.push('/explore');
+    } else {
+      router.push('/login');
+    }
+  };
+
+  const handleCreateQuiz = () => {
+    if (user) {
+      router.push('/create-quiz/dereq');
+    } else {
+      router.push('/login');
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row items-center justify-around p-8 bg-gradient-to-b from-[#f1f7ff] to-[#ddeeff] py-16">
       {/* Left Section */}
@@ -14,10 +37,16 @@ const Hero = () => {
           Create and take quizzes to certify your knowledge from online courses.
         </p>
         <div className="flex gap-4">
-          <button className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">
+          <button
+            onClick={handleTakeQuiz}
+            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+          >
             Take a Quiz
           </button>
-          <button className="bg-gray-800 text-white px-5 py-4 rounded hover:bg-gray-900">
+          <button
+            onClick={handleCreateQuiz}
+            className="bg-gray-800 text-white px-5 py-2 rounded hover:bg-gray-900"
+          >
             Create a Quiz
           </button>
         </div>
@@ -30,7 +59,7 @@ const Hero = () => {
           alt="Hero"
           width={760}
           height={620}
-          className='rounded-lg'
+          className="rounded-lg"
           priority
         />
       </div>

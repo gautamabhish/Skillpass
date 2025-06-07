@@ -9,7 +9,7 @@ export default function Home() {
 
         <NavbarLogged />
         <CardContainer />
-        {/* <CoursesContainer /> */}
+        <CoursesContainer />
         <CertificatesContainer />
         <RecommendedContainer />
       </section>

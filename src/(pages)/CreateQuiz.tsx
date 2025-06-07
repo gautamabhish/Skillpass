@@ -19,6 +19,7 @@ const CreateQuiz = () => {
   const [message, setMessage] = React.useState<string[]>([]);
   const router = useRouter();
   const userId = useAppSelector((state) => state.user.id);
+  const userName = useAppSelector((state) => state.user.name);
   const {courseData,setCourseData} = useCourseCreate();
 
   const validateCourseData = () => {
@@ -70,6 +71,7 @@ const payload = {
   duration: courseData.duration,      // number of minutes
   difficulty: courseData.difficulty,  // 'Easy' | 'Medium' | 'Hard'
   creatorId: userId,         // your user ID
+  creatorName : userName, // your user name
   courseId: courseData.courseId,      // or null
   courseURL: courseData.courseURL,    // or null
   thumbURL: courseData.thumbURL,      // or null
@@ -83,7 +85,7 @@ const payload = {
 
 try {
   const res = await axios.post(
-    'http://localhost:5000/api/quiz/create',
+    'http://192.168.1.7:5000/api/quiz/create',
     payload,
     { withCredentials: true }
   );

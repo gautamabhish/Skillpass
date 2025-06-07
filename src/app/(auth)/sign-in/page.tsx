@@ -6,7 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { signIn } from '@/store/userSlice';
-
+import Link from 'next/link';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function SignInPage() {
@@ -40,15 +40,15 @@ export default function SignInPage() {
           Login to your account
         </p>
 
-        <button className="flex items-center justify-center gap-3 bg-white border w-full px-4 py-2 rounded-md shadow hover:shadow-md transition mb-4">
+        {/* <button className="flex items-center justify-center gap-3 bg-white border w-full px-4 py-2 rounded-md shadow hover:shadow-md transition mb-4">
           <FcGoogle className="text-xl" /> Sign in with Google
-        </button>
+        </button> */}
 
-        <div className="flex items-center justify-between my-4">
+        {/* <div className="flex items-center justify-between my-4">
           <hr className="w-full border-gray-300" />
           <span className="px-3 text-sm text-gray-500">OR</span>
           <hr className="w-full border-gray-300" />
-        </div>
+        </div> */}
 
         <form onSubmit={handleSignIn} className="space-y-4">
           <input
@@ -72,7 +72,7 @@ export default function SignInPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
           >
             Sign In
           </button>
@@ -80,12 +80,13 @@ export default function SignInPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?
-          <button
-            onClick={() => router.push('/register')}
+          <Link
+            href="/register"
+            
             className="ml-2 text-blue-600 font-semibold hover:underline"
           >
             Sign Up
-          </button>
+          </Link>
         </p>
       </div>
     </div>

@@ -21,6 +21,7 @@ const CreateQuiz = () => {
   const userId = useAppSelector((state) => state.user.id);
   const userName = useAppSelector((state) => state.user.name);
   const {courseData,setCourseData} = useCourseCreate();
+   const [loading, setLoading] = React.useState(false);
 
   const validateCourseData = () => {
     if (!courseData.title ) {
@@ -47,56 +48,69 @@ const CreateQuiz = () => {
   };
   
 
-  const handleSubmit = async ()=>{
-    if (!validateCourseData()) return;
+const handleSubmit = async () => {
+  setLoading(true);
+  if (!validateCourseData()){
+     setLoading(()=>false)
+     return;}
 
-      if(courseData.thumbURL)(courseData.thumbURL = await handleImgUpload(courseData.thumbFile as File));
-      courseData.Questions.forEach(async (question) => {
-        if (question.AttachfileType?.includes( 'audio')) {
-         question.AttachfileURL= await handleAudioUpload(question.AttachfileBlob as File);
-        } else if (question.AttachfileType?.includes('video')) {   
-          question.AttachfileURL = await handleVideoUpload(question.AttachfileBlob as File);
-        }
-        else if(question.AttachfileType?.includes('image') ){
-        question.AttachfileURL= await handleImgUpload(question.AttachfileBlob as File);
-          
-        }
-        else console.log('No file to upload');
+  try {
+    // Upload thumbnail if available
+    if (courseData.thumbFile) {
+      courseData.thumbURL = await handleImgUpload(courseData.thumbFile as File);
+    }
+
+  const updatedQuestions = await Promise.all(courseData.Questions.map(async (question) => {
+  const updated = { ...question };
+
+  try {
+    if (question.AttachfileBlob && question.attachFileType) {
+      if (question.attachFileType?.includes('audio')) {
+        updated.attachFileURL = await handleAudioUpload(question.AttachfileBlob);
+      } else if (question.attachFileType.includes('video')) {
+        updated.attachFileURL = await handleVideoUpload(question.AttachfileBlob);
+      } else if (question.attachFileType.includes('image')) {
+        updated.attachFileURL = await handleImgUpload(question.AttachfileBlob);
       }
-    )
-    // Assume `courseData` is your state object with exactly the shape your API expects
-const payload = {
-  title: courseData.title,
-  description: courseData.description,
-  duration: courseData.duration,      // number of minutes
-  difficulty: courseData.difficulty,  // 'Easy' | 'Medium' | 'Hard'
-  creatorId: userId,         // your user ID
-  creatorName : userName, // your user name
-  courseId: courseData.courseId,      // or null
-  courseURL: courseData.courseURL,    // or null
-  thumbURL: courseData.thumbURL,      // or null
-  price: Number(courseData.price),
-  backtrack: courseData.backtrack,
-  randomize: courseData.randomize,
-  Tags: courseData.Tags,              // string[] | null
-  Questions: courseData.Questions,    // your array of questions
-  currency: courseData.currency,      // e.g. 'INR'
-};
+    }
+  } catch (error) {
+    console.error('Upload failed for question:', question, error);
+  }
 
-try {
-  const res = await axios.post(
-    'http://192.168.1.7:5000/api/quiz/create',
-    payload,
-    { withCredentials: true }
-  );
-  if (res.status === 200) {
-    // e.g. navigate to the new quiz page or show success
-    router.push(`/create-quiz`);
+  return updated;
+}));
+// console.log('Updated Questions:', updatedQuestions);
+
+    const payload = {
+      title: courseData.title,
+      description: courseData.description,
+      duration: courseData.duration,
+      difficulty: courseData.difficulty,
+      creatorId: userId,
+      creatorName: userName,
+      courseId: courseData.courseId,
+      courseURL: courseData.courseURL,
+      thumbURL: courseData.thumbURL,
+      price: Number(courseData.price),
+      backtrack: courseData.backtrack,
+      randomize: courseData.randomize,
+      Tags: courseData.Tags,
+      Questions: updatedQuestions,
+      currency: courseData.currency,
+    };
+
+    const res = await axios.post("https://edutrust-backend.onrender.com/api/quiz/create", payload, {
+      withCredentials: true,
+    });
+
+    if (res.status === 201) {
+      router.push(`/create-quiz`);
+    }
+  } catch (err) {
+    console.error('Quiz creation failed', err);
   }
-} catch (err) {
-  console.error('Quiz creation failed', err);
-}
-  }
+  setLoading(() => false);
+};
 
   
   return (
@@ -127,9 +141,14 @@ try {
             {/* <button className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition" onClick={handleSubmit}>
               Save Draft
             </button> */}
-            <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition" onClick={handleSubmit}>
-              Publish Quiz
-            </button>
+           <button
+  disabled={loading}
+  className={`px-4 py-2 text-sm font-medium rounded-md text-white transition cursor-pointer 
+    ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+  onClick={handleSubmit}
+>
+  {loading ? 'Publishing...' : 'Publish Quiz'}
+</button>
           </div>
         </div>
       </div>

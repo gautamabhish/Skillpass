@@ -9,11 +9,12 @@ export type Quiz = {
   title: string;
   tag: string;
   creatorName: string;
-  image?: string;
+  thumbnailURL?: string;
   description?: string;
   price?: number;
   duration?: number;
   color?: string;
+  creatorProfilePic?: string;
   // add any other fields RecommendCard needs
 };
 
@@ -54,10 +55,11 @@ export const Trending: React.FC<TrendingProps> = ({ data, category = 'All Catego
             key={quiz.id || index}
           id={quiz.id}
           authorName={quiz.creatorName || 'Unknown'}
-          image={quiz.image || 'https://static.vecteezy.com/system/resources/previews/011/066/660/original/quiz-time-button-quiz-time-speech-bubble-quiz-time-text-web-template-illustration-vector.jpg'}
-          tag={quiz.tag || 'General'}
+          image={quiz.thumbnailURL || 'https://static.vecteezy.com/system/resources/previews/011/066/660/original/quiz-time-button-quiz-time-speech-bubble-quiz-time-text-web-template-illustration-vector.jpg'}
+          tag={quiz.tag || ''}
           color={quiz?.color || '#2563eb'}
           title={quiz.title}
+          authorAvatar={quiz.creatorProfilePic }
           description={quiz.description || 'No description available'}
           price={quiz.price ?? 0}
           time={quiz.duration || 5}

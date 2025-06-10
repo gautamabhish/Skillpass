@@ -9,7 +9,7 @@ export const useCertificateFetch = (certificateId:string) => {
   return useQuery({
     queryKey: ['certificate',certificateId ],
     queryFn: async () => {
-      const res = await axios.get(`http://192.168.1.7:5000/api/users/auth/certificate/${certificateId}`, {
+      const res = await axios.get(`https://edutrust-backend.onrender.com/api/users/auth/certificate/${certificateId}`, {
   withCredentials: true,
 });
 

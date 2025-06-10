@@ -9,7 +9,7 @@ export const useDashboard = () => {
   return useQuery({
     queryKey: ['dashboard', userId],
     queryFn: async () => {
-      const res = await axios.get('http://192.168.1.7:5000/api/users/auth/dashboard', {
+      const res = await axios.get('https://edutrust-backend.onrender.com/api/users/auth/dashboard', {
         params:  {userId} ,
         withCredentials: true,
       });

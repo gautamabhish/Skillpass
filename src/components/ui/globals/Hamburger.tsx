@@ -49,7 +49,7 @@ const HamburgerMenu = () => {
           open ? 'translate-x-0' : 'translate-x-full'
         )}
       >
-        <div className="flex flex-col bg-gray-50 h-full py-6">
+        <div className="flex flex-col bg-gray-50 h-full py-6 children:cursor-pointer">
           {user ? (
             <>
               <Link href="/dashboard" className="px-4 py-2 hover:bg-blue-700 hover:text-white">

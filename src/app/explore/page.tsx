@@ -12,6 +12,7 @@ import SearchBar from '@/components/ui/globals/SearchBar';
 import { Trending } from '@/components/explore/Trending';
 import { useExplore } from '@/hooks/useExplore';
 import { useQuizTitleFetch } from '@/hooks/useQuizTitleFetch';
+import { useAppSelector } from '@/store/hooks';
 
 type Quiz = {
   id: string;
@@ -40,7 +41,8 @@ const { data: searchedQuizzes, refetch: refetchSearch, isFetching } = useQuizTit
 // 🔁 All quizzes initially
 const { data, isLoading, isError } = useExplore();
  const allQuizzes = useMemo(() => data?.courses || [], [data?.courses]);
- console.log('All Quizzes:', allQuizzes);
+ const userId = useAppSelector((state) => state.user?.id);
+//  console.log('All Quizzes:', userId);
 useEffect(() => {
   setFiltered(allQuizzes);
 }, [allQuizzes]);

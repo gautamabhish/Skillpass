@@ -7,8 +7,8 @@ import axios from "axios";
 const handleImgUpload = async (file: File):Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'edutrust');
-  // formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
+  formData.append('upload_preset', 'ForQuizdata');
+  formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
 
   try {
     const response = await axios.post(process.env.NEXT_PUBLIC_UPLOAD_URL as string, formData, {
@@ -34,9 +34,9 @@ const handleImgUpload = async (file: File):Promise<string> => {
 const handleVideoUpload = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'edutrust');
+  formData.append('upload_preset', 'ForQuizdata');
   formData.append('resource_type', 'auto');
-  // formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
+  formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
   
   try {
     const response = await axios.post(process.env.NEXT_PUBLIC_UPLOAD_URL as string, formData, {
@@ -63,9 +63,9 @@ const handleVideoUpload = async (file: File) => {
 const handleAudioUpload = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'edutrust');
+  formData.append('upload_preset', 'ForQuizdata');
   formData.append('resource_type', 'auto');
-  // formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
+  formData.append('api_key', process.env.NEXT_PUBLIC_API_KEY as string);
 
   try {
     const response = await axios.post(process.env.NEXT_PUBLIC_UPLOAD_URL as string, formData, {

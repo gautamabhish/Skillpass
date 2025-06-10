@@ -6,7 +6,27 @@ import { Rocket } from 'lucide-react';
 import Image from 'next/image';
 import NavbarLogged from '@/components/ui/globals/NavbarLogged';
 import { useGetCreations } from '@/hooks/useGetCreations';
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+
+// ✅ Register chart components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 type Quiz = {
   id: string;
@@ -28,6 +48,10 @@ const CreateQuizSection = () => {
       .sort((a, b) => b.earnings - a.earnings)
       .slice(0, 3);
   }, [quizzes]);
+
+const filteredQuizzes = useMemo(()=>quizzes.filter(
+  (quiz:Quiz) => !topQuizzes.some((top) => top.id === quiz.id)
+),[quizzes])
 
   const chartData = {
     labels: quizzes.map((q:Quiz) => q.title),
@@ -64,6 +88,15 @@ const CreateQuizSection = () => {
               </div>
             </div>
           )}
+        <div className="flex justify-center my-10">
+  <Link
+    href="/create-quiz/dereq"
+    className="inline-flex items-center gap-2 px-8 py-3 justify-center bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105"
+  >
+    <Rocket size={20} /> Create  Quiz
+  </Link>
+</div>
+
 
           {/* Top Performing Quizzes */}
           {topQuizzes.length > 0 && (
@@ -86,10 +119,12 @@ const CreateQuizSection = () => {
 
           {/* User's Quizzes */}
           <div className="mt-10">
-            {/* <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Quizzes</h2> */}
-            {quizzes.length > 0 ? (
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Quizzes</h2>
+
+            {filteredQuizzes.length > 0 ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {quizzes.map((quiz:Quiz) => (
+                 
+                {filteredQuizzes.map((quiz:Quiz) => (
                   <div
                     key={quiz.id}
                     className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 ease-in-out border border-gray-100 transform hover:-translate-y-1"
@@ -99,6 +134,8 @@ const CreateQuizSection = () => {
                     <p className="text-sm text-green-700 mt-1 font-semibold">Earnings: ₹{quiz.earnings}</p>
                   </div>
                 ))}
+
+
               </div>
             ) : (
               !isLoading && (

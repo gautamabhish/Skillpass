@@ -7,7 +7,6 @@ import { useFetchQuizPaid } from '@/hooks/useFetchQuizPaid';
 import TimerDisplay from '@/components/ui/globals/Timer';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { p } from 'framer-motion/client';
 
 type Question = {
   id: number;
@@ -27,6 +26,7 @@ type AnsweredAndMarked = number[];          // array of question indices
 
 export default function JEEStyleQuizInterface({ id }: { id: string }) {
   const { data, isLoading } = useFetchQuizPaid(id);
+  console.log('Quiz data:', data);
   const userName = useAppSelector((s) => s.user.name);
   const userId = useAppSelector((s) => s.user.id);
   const router = useRouter();
@@ -102,6 +102,74 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
       return answer.includes(optionIndex);
     }
     return answer === optionIndex;
+  };
+
+  // Helper function to render media attachment
+  const renderMediaAttachment = (question: Question) => {
+    if (!question.attachFileURL) return null;
+
+    const fileType = question.attachFileType?.toLowerCase() || '';
+    
+    if (fileType.includes('image')) {
+      return (
+        <Image
+          src={question.attachFileURL}
+          alt="Question attachment"
+          width={400}
+          height={300}
+          className="rounded shadow-md"
+        />
+      );
+    } else if (fileType.includes('video')) {
+      return (
+        <video
+          controls
+          className="rounded shadow-md max-w-full"
+          style={{ maxHeight: '400px' }}
+        >
+          <source src={question.attachFileURL} type={fileType} />
+          Your browser does not support the video .
+        </video>
+      );
+    } else if (fileType.includes('audio')) {
+      return (
+        <div className="bg-gray-50 p-4 rounded shadow-md">
+          <div className="flex items-center gap-3 mb-2">
+            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.972 7.972 0 0017 12a7.972 7.972 0 00-1.343-4.243 1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 12a5.983 5.983 0 01-.757 2.829 1 1 0 11-1.415-1.414A3.983 3.983 0 0013 12a3.983 3.983 0 00-.172-1.171 1 1 0 010-1.415z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-medium text-gray-700">Audio Attachment</span>
+          </div>
+          <audio
+            controls
+            className="w-full"
+            preload="metadata"
+          >
+            <source src={question.attachFileURL} type={fileType} />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      );
+    } else {
+      // Fallback for other file types
+      return (
+        <div className="bg-gray-50 p-4 rounded shadow-md">
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+            </svg>
+            <a
+              href={question.attachFileURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline hover:text-blue-800 transition-colors"
+            >
+              View Attachment ({fileType || 'Unknown format'})
+            </a>
+          </div>
+        </div>
+      );
+    }
   };
 
   // Navigation between questions
@@ -204,7 +272,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
 
       // Send it
       const res = await axios.post(
-        'http://192.168.1.7:5000/api/quiz/submit',
+        'https://edutrust-backend.onrender.com/api/quiz/submit',
         payload,
         { withCredentials: true }
       );
@@ -299,35 +367,18 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
           <div className="bg-gray-100 p-4 mb-6 rounded">
             {questions[currentQuestion - 1] && (
               <div>
-                {/* Attachment (if any) */}
-                {questions[currentQuestion - 1].attachFileURL && (
-                  <div className="mb-4">
-                    {questions[currentQuestion - 1].attachFileType
-                      ?.startsWith('image') ? (
-                      <Image
-                        src={questions[currentQuestion - 1].attachFileURL!}
-                        alt="attachment"
-                        width={400}
-                        height={300}
-                        className="rounded"
-                      />
-                    ) : (
-                      <a
-                        href={questions[currentQuestion - 1].attachFileURL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        View Attachment
-                      </a>
-                    )}
-                  </div>
-                )}
+                {/* Media Attachment */}
 
                 {/* Question Text */}
-                <p className="mb-4 text-gray-800">
+                <p className="mb-4 text-gray-800 font-bold">
                   {questions[currentQuestion - 1].text}
                 </p>
+
+                {questions[currentQuestion - 1].attachFileURL && (
+                  <div className="mb-4">
+                    {renderMediaAttachment(questions[currentQuestion - 1])}
+                  </div>
+                )}
 
                 {/* Points / Negative Points */}
                 <p className="text-sm mb-2 text-gray-600">

@@ -29,9 +29,10 @@ import {
   FaTimesCircle,
   FaPercentage
 } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export default  function dataDetailPage(){ 
-
+  const router = useRouter();
     const routerParams = useParams();
   const { data, isLoading } = useFetchQuiz(routerParams.id as string);
 
@@ -228,7 +229,7 @@ useEffect(() => {
   };
 
   const handleShare = async () => {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://192.168.1.7:3000'}/data/${data?.id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://edutrust-backend.onrender.com'}/data/${data?.id}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: data?.title, url });
@@ -250,7 +251,7 @@ const handleEnroll = async () => {
 
   try {
     // 1. Create Razorpay order from backend
-    const response = await axios.post('http://192.168.1.7:5000/api/payments/create', {
+    const response = await axios.post('https://edutrust-backend.onrender.com/api/payments/create', {
       userId,
       quizId: data.id,
       referralToken: referralTokenFromUrl || null,
@@ -263,6 +264,7 @@ const handleEnroll = async () => {
     // 2. Razorpay checkout options
     if(orderId ===process.env.NEXT_PUBLIC_FREE_QUIZ_ORDER_ID){
       alert('This quiz is free to access. You can start it now without payment.');
+      router.push(`/session/${data.id}`);
          return ;
     }
  

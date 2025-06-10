@@ -16,7 +16,7 @@ function CertificatesContainer() {
         Your Certificates
       </h1>
 
-      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-4 place-items-center px-8">
+      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 place-items-center px-8">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -40,6 +40,7 @@ function CertificatesContainer() {
               <CertificateCard
                 image="/certificate-default.png"
                 title={cert.userName}
+                id={cert.id}
                 completed={`Scored ${cert.score} - ${new Date(cert.issuedAt).toLocaleDateString()}`}
               />
             </div>

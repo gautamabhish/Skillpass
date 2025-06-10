@@ -5,10 +5,11 @@ interface CertificateCardProps {
   image: string;
   title: string;
   completed: string;
+  id:string
 }
 
 function CertificateCard(props: CertificateCardProps) {
-  const { image, title, completed } = props;
+  const { image, title, completed ,id} = props;
 
   return (
     <div className="bg-white shadow-md rounded-xl p-4 flex flex-col  gap-4 w-[300px] md:h-[330px] md:w-[350px] ">
@@ -19,7 +20,7 @@ function CertificateCard(props: CertificateCardProps) {
 
       <div className='flex items-center justify-between'> 
       <span className="text-sm font-semibold text-gray-500">{completed}</span>
-        <a href={image} target='_blank' download className="text-blue-400 hover:text-blue-500 transition">
+        <a href={`/certificate/${id}`} target='_blank'  className="text-blue-400 hover:text-blue-500 transition" >
         <FiDownload />
       </a>
       </div>

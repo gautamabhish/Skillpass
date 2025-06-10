@@ -1,14 +1,37 @@
-'use client'
-import { useAuth } from '@/Providers/AuthProvider';
-import React, { useState, useRef, useEffect, ReactHTMLElement, use } from 'react';
-import Link from 'next/link';
-// import { useRef } from 'react';
+'use client';
+
+import { useAppSelector } from '@/store/hooks';
+import React, { useState, useRef, useEffect, use } from 'react';
 import HamburgerMenu from './Hamburger';
+import { uploadProfileImage } from '@/lib/uploadProfilePic';
+import { useDashboard } from '@/hooks/useDashbaord';
+import Image from 'next/image';
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUD_NAME;
+
 const NavbarLogged = () => {
-
-
+  const {data,isLoading} = useDashboard();
   const profilePicRef = useRef<HTMLInputElement>(null);
-  // const {signOut} = useAuth()
+  const user = useAppSelector((state) => state.user);
+
+  const [avatarUrl, setAvatarUrl] = useState<string>(data?.profilePic ||'/user.jpg');
+
+  // useEffect(() => {
+  //   if (data?.proflePic) {
+  //     setAvatarUrl(data.proflePic);
+  //   }
+  // }, [data]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    try {
+    const uploadedUrl = await uploadProfileImage(file, user.id);
+    setAvatarUrl(uploadedUrl);
+  } catch (err) {
+    console.error('Failed to upload image:', err);
+  }
+  };
 
   return (
     <nav className="flex justify-between items-center p-4 bg-white relative">
@@ -37,26 +60,28 @@ const NavbarLogged = () => {
           </svg>
         </div>
 
-        {/* Avatar and Dropdown */}
-        <input type="file" className='hidden' ref={profilePicRef} />
-        <div className="relative" >
-          <img
-           
-            src="./window.svg"
+        {/* Hidden File Input */}
+        <input
+          type="file"
+          className="hidden"
+          ref={profilePicRef}
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+
+        {/* Avatar */}
+        <div className="relative">
+          <Image
+            width={42}
+            height={42}
+            src={avatarUrl}
             alt="User Avatar"
             className="object-cover rounded-full h-8 w-8 cursor-pointer"
-            onClick={() => {
-              // Handle avatar click, e.g., open profile dropdown
-              if (profilePicRef.current) {
-                profilePicRef.current.click();
-              }
-            }}
+            onClick={() => profilePicRef.current?.click()}
           />
-
-          
-        
         </div>
-        <HamburgerMenu></HamburgerMenu>
+
+        <HamburgerMenu />
       </div>
     </nav>
   );

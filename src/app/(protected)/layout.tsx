@@ -6,6 +6,8 @@ import { useAppSelector } from '@/store/hooks';
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
+  // const state = useAppSelector((state) => state);
+  // console.log('ProtectedLayout state:', state);
   const user = useAppSelector((state) => state.user);
 
   useEffect(() => {

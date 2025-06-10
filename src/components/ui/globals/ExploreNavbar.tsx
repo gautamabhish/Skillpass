@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 // Mock data to simulate suggestions
 const sampleSuggestions = ['Create Quiz jdschkchakshkcbdbmjcjsjbdschkchakshkcbdbmjcjsjb', 'Take Quiz', 'Quiz Results', 'Profile Settings', 'Support Center'];
 
-const SearchNavbar = () => {
+const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -31,4 +31,4 @@ const SearchNavbar = () => {
   );
 };
 
-export default SearchNavbar;
+export default Navbar;

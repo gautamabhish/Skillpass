@@ -17,6 +17,7 @@ interface cardData {
   authorRole?: string;
   authorAvatar?: string;
   price?: number;
+  
 }
 
 function RecommendCard(props: cardData) {

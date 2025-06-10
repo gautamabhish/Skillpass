@@ -19,6 +19,10 @@ const AddQuestions: React.FC = () => {
       negPoints: 0,
       options: ["", ""],
       correctAnswers: [],
+      attachFileType: '',
+      AttachfileBlob: null,
+      AttachpreviewURL: '',
+      attachFileURL: '',
     };
 
     setCourseData(prev => ({
@@ -63,7 +67,7 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
           ...updated[index],
           AttachfileBlob: file,
           AttachpreviewURL: previewURL,
-          AttachfileType: file.type,
+          attachFileType: file.type,
         };
         return { ...prev, Questions: updated };
       });
@@ -131,11 +135,11 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
 
             {q.AttachpreviewURL && (
               <div className="mt-2">
-                {q.AttachfileType?.includes('audio') ? (
+                {q.attachFileType?.includes('audio') ? (
                   <audio controls src={q.AttachpreviewURL} />
-                ) : q.AttachfileType?.includes('video') ? (
+                ) : q.attachFileType?.includes('video') ? (
                   <video controls width="300" src={q.AttachpreviewURL} />
-                ) : q.AttachfileType?.includes('image') ? (
+                ) : q.attachFileType?.includes('image') ? (
                   <Image
                     src={q.AttachpreviewURL}
                     alt="Preview"
@@ -144,7 +148,7 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
                     className="object-cover mt-2"
                   />
                 ) : (
-                  <p className="text-sm text-gray-500">Preview: {q.AttachfileType}</p>
+                  <p className="text-sm text-gray-500">Preview: {q.attachFileType}</p>
                 )}
               </div>
             )}
@@ -167,7 +171,7 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
               </select>
 
               <input
-                type="text"
+                type="number"
                 inputMode="numeric"
                 placeholder="Points"
                 className="w-24 px-2 py-1 border border-[#b7bbbe] rounded text-sm"
@@ -179,7 +183,7 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
               />
 
               <input
-                type="text"
+                type="number"
                 inputMode="numeric"
                 placeholder="0"
                 className="w-28 px-2 py-1 border border-[#b7bbbe] text-red-500 rounded text-sm font-bold"

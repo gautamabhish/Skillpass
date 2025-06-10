@@ -20,9 +20,9 @@ export interface Question {
   options: string[];
   correctAnswers: number[];
   answerText?: string;
-  AttachfileType?: string;
-  AttachfileURL?: string;
-  AttachfileBlob?: File;
+  attachFileType?: string;
+  attachFileURL?: string;
+  AttachfileBlob?: File|null;
   AttachpreviewURL?: string;
 }
 

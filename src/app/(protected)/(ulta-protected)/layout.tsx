@@ -1,7 +1,7 @@
-//@ts-nocheck
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function UltraProtectedLayout({
   children,
@@ -9,40 +9,59 @@ export default function UltraProtectedLayout({
   children: React.ReactNode;
 }) {
   const [showWarning, setShowWarning] = useState(false);
+  const [warningCount, setWarningCount] = useState(0);
+  const restrictedZoneRef = useRef({ top: 0, left: 0, width: 0, height: 0 });
+  const router = useRouter(); // For redirecting
 
-  // Define the restricted zone, using the window size with some padding
-  const padding = 100; // Set the padding you want around the restricted area
-  const restrictedZone = {
-    top: padding,
-    // left: padding,
-    width: window.innerWidth - padding * 2,
-    height: window.innerHeight - padding * 2,
+  const padding = 100;
+
+  const updateRestrictedZone = () => {
+    restrictedZoneRef.current = {
+      top: padding,
+      left: padding,
+      width: window.innerWidth - padding * 2,
+      height: window.innerHeight - padding * 2,
+    };
   };
+
+  useEffect(() => {
+    updateRestrictedZone();
+    window.addEventListener('resize', updateRestrictedZone);
+    return () => window.removeEventListener('resize', updateRestrictedZone);
+  }, []);
 
   const handleMouseMove = (e: MouseEvent) => {
     const { clientX, clientY } = e;
+    const { top, left, width, height } = restrictedZoneRef.current;
 
-    // Check if the cursor is inside or outside the restricted zone
-    if (
-      clientX < restrictedZone.left ||
-      clientX > restrictedZone.left + restrictedZone.width ||
-      clientY < restrictedZone.top ||
-      clientY > restrictedZone.top + restrictedZone.height
-    ) {
+    const isOutside =
+      clientX < left ||
+      clientX > left + width ||
+      clientY < top ||
+      clientY > top + height;
+
+    if (isOutside) {
       setShowWarning(true);
+      setWarningCount((prev) => {
+        const next = prev + 1;
+
+        // 🚨 Auto-exit logic after 200 violations
+        if (next >= 100) {
+          console.warn('Exceeded 200 violations. Auto-submitting.');
+          // Redirect or trigger auto-submit
+          router.push('/submit?reason=cheating'); // <-- Customize as needed
+        }
+
+        return next;
+      });
     } else {
       setShowWarning(false);
     }
   };
 
   useEffect(() => {
-    // Add mouse move listener to detect cursor position
     document.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      // Clean up the listener when the component is unmounted
-      document.removeEventListener('mousemove', handleMouseMove);
-    };
+    return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const handleCloseModal = () => {
@@ -51,42 +70,69 @@ export default function UltraProtectedLayout({
 
   return (
     <div>
-      {/* Display warning modal if cursor is outside the restricted zone */}
       {showWarning && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-        >
+        <>
           <div
             style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '8px',
-              textAlign: 'center',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 9999,
             }}
           >
-            <h2>Warning!</h2>
-            <p>You are moving outside the allowed area!
-               
-            </p>
-            <button onClick={handleCloseModal} style={{ marginTop: '10px' ,color:'white',backgroundColor:'red',padding:'10px 20px',borderRadius:'5px'}}>
-              Can Be Marked As Cheated
-            </button>
+            <div
+              style={{
+                background: 'white',
+                padding: '24px',
+                borderRadius: '8px',
+                textAlign: 'center',
+              }}
+            >
+              <h2 className="text-lg font-semibold">Warning!</h2>
+              <p className="mt-2">
+                Your mouse moved outside the allowed area.
+              </p>
+              <p className="text-sm text-red-600 font-bold mt-1">
+               The quiz will neither be submitted nor saved if you continue to move outside the designated area.
+              </p>
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  marginTop: '15px',
+                  backgroundColor: 'red',
+                  color: 'white',
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                }}
+              >
+                Okay, I Understand
+              </button>
+            </div>
           </div>
-        </div>
+
+          {/* Optional: Show target center */}
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              width: '10px',
+              height: '10px',
+              backgroundColor: 'red',
+              borderRadius: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10000,
+            }}
+          />
+        </>
       )}
 
-      {/* Your layout content */}
       {children}
     </div>
   );

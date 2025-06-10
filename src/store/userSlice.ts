@@ -30,8 +30,8 @@ const initialState: UserState = {
 export const signIn = createAsyncThunk(
   'user/signIn',
   async ({ email, password }: { email: string; password: string }, { dispatch }) => {
-    const res = await axios.post('http://192.168.1.7:5000/api/users/auth/login', { email, password }, { withCredentials: true });
-    const user = res.data.user;
+    const res = await axios.post('https://edutrust-backend.onrender.com/api/users/auth/login', { email, password }, { withCredentials: true });
+   const  user  =  res.data.user
 
     dispatch(setUser(user));
     return user;
@@ -41,21 +41,21 @@ export const signIn = createAsyncThunk(
 export const signUp = createAsyncThunk(
   'user/signUp',
   async ({ name, email, password }: { name: string; email: string; password: string }) => {
-    const res = await axios.post('http://192.168.1.7:5000/api/users/auth/register', { name, email, password });
+    const res = await axios.post('https://edutrust-backend.onrender.com/api/users/auth/register', { name, email, password });
     return res.status;
   }
 );
 
-export const signInWithGoogle = createAsyncThunk(
-  'user/signInWithGoogle',
-  async (credential: string, { dispatch }) => {
-    const res = await axios.post('http://192.168.1.7:5000/api/users/auth/google', { token: credential });
-    const user = res.data.user;
+// export const signInWithGoogle = createAsyncThunk(
+//   'user/signInWithGoogle',
+//   async (credential: string, { dispatch }) => {
+//     const res = await axios.post('http://192.168.1.8:5000/api/users/auth/google', { token: credential });
+//     const user = res.data.user;
 
-    dispatch(setUser(user));
-    return user;
-  }
-);
+//     dispatch(setUser(user));
+//     return user;
+//   }
+// );
 
 // --- Slice ---
 

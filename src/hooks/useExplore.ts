@@ -11,7 +11,7 @@ export const useExplore = () => {
   return useQuery({
     queryKey: ['explore',userId ],
     queryFn: async () => {
-      const res = await axios.get('http://192.168.1.7:5000/api/users/auth/explore', {
+      const res = await axios.get('https://edutrust-backend.onrender.com/api/users/auth/explore', {
   withCredentials: true,
 });
 

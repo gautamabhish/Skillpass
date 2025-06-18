@@ -21,7 +21,7 @@ const Works = () => {
 
   return (
     <div className="p-8 bg-white">
-      <h2 className="text-2xl font-bold mb-6 text-center">How EduTrust Works</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">How SkillPass Works</h2>
       <div className="grid md:grid-cols-3 gap-6">
         {data.map((item, index) => (
           <div key={index} className="flex flex-col items-center bg-white p-6 rounded-lg ">

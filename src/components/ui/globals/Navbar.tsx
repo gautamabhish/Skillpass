@@ -6,7 +6,7 @@ const Navbar = () => {
 
         <div  className='flex justify-between items-center py-1'>
             <ul className='flex p-4 ml-12 gap-12 items-center'>
-                <li className='text-[#1658e7e8] font-semibold text-2xl pr-2.5'>EduTrust</li>
+                <li className='text-[#1658e7e8] font-semibold text-2xl pr-2.5'>SkillPass</li>
                <ul className='flex gap-12 items-center  ml-4 text-[#616975] '>
                <li className='hover:text-slate-700'><Link href={"/explore"}>Explore</Link></li>
                 {/* <li className='hover:text-slate-700'><Link href={"/create-quiz"}>Create Test</Link></li> */}

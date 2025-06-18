@@ -38,7 +38,7 @@ const NavbarLogged = () => {
       {/* Branding */}
       <div className="ml-8 text-2xl flex gap-4 font-bold text-[#095ef1]">
         <img src="./globe.svg" className="h-8 w-8 object-cover" alt="Logo" />
-        <div>EduTrust</div>
+        <div>SkillPass</div>
       </div>
 
       {/* Right Side */}

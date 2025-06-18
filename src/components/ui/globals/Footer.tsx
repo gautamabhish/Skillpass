@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Column 1: Branding */}
           <div className="flex flex-col">
             <div className="text-2xl font-bold text-[#3277ee] mb-2">
-              EduTrust
+              SkillPass
             </div>
             <p className="text-gray-600">
               Certify what you've learned.
@@ -96,7 +96,7 @@ const Footer = () => {
 
         {/* Bottom Section: Copyright */}
         <div className="border-t border-gray-200 mt-8 pt-6 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} EduTrust. All rights reserved.
+          &copy; {new Date().getFullYear()} Skillpass. All rights reserved.
         </div>
       </div>
     </footer>

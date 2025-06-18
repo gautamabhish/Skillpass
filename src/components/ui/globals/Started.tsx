@@ -11,7 +11,7 @@ const Started = () => {
           Ready to Prove Your Knowledge?
         </h1>
         <p className="text-xs text-white ">
-          Join thousands of learners who have verified their skills through EduTrust.
+          Join thousands of learners who have verified their skills through SkillPass.
         </p>
         <Link href='/explore' className=" py-3 px-4 bg-white text-blue-500 font-semibold rounded ">
           Get Started Now

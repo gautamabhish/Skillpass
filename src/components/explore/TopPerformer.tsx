@@ -38,6 +38,7 @@ const TopPerformer = () => {
       
       {bestRatedCertificates.map((card, index) => (
         <RecommendCard
+          id={"77"}
           key={index}
           image={card.image}
           tag={card.tag}

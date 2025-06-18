@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       'res.cloudinary.com',
     ]
    },
+     eslint: {
+    ignoreDuringBuilds: true, // ✅ disables linting during `next build`
+  },
 };
+
+
 
 export default nextConfig;

@@ -272,7 +272,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
 
       // Send it
       const res = await axios.post(
-        'https://edutrust-backend.onrender.com/api/quiz/submit',
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/submit`,
         payload,
         { withCredentials: true }
       );

@@ -6,7 +6,7 @@ export const useQuizTitleFetch = (title: string) => {
   return useQuery({
     queryKey: ['quiz/title', title],
     queryFn: async () => {
-      const res = await axios.get(`https://edutrust-backend.onrender.com/api/quiz/search/${title}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/search/${title}`, {
         withCredentials: true,
       });
       return res.data;

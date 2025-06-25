@@ -229,7 +229,7 @@ useEffect(() => {
   };
 
   const handleShare = async () => {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://edutrust-backend.onrender.com'}/data/${data?.id}`;
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/data/${data?.id}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: data?.title, url });
@@ -251,7 +251,7 @@ const handleEnroll = async () => {
 
   try {
     // 1. Create Razorpay order from backend
-    const response = await axios.post('https://edutrust-backend.onrender.com/api/payments/create', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/create`, {
       userId,
       quizId: data.id,
       referralToken: referralTokenFromUrl || null,
@@ -263,8 +263,8 @@ const handleEnroll = async () => {
 
     // 2. Razorpay checkout options
     if(orderId ===process.env.NEXT_PUBLIC_FREE_QUIZ_ORDER_ID){
-      alert('This quiz is free to access. You can start it now without payment.');
-      router.push(`/session/${data.id}`);
+      alert('This quiz is free to access. You can start it now without payment.Check the quizzes owned by you.');
+      // router.push(`/session/${data.id}`);
          return ;
     }
  

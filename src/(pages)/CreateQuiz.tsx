@@ -99,7 +99,7 @@ const handleSubmit = async () => {
       currency: courseData.currency,
     };
 
-    const res = await axios.post("https://edutrust-backend.onrender.com/api/quiz/create", payload, {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/create`, payload, {
       withCredentials: true,
     });
 

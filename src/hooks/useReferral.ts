@@ -8,7 +8,7 @@ export const useReferral = () => {
   return useQuery({
     queryKey: ['/share-and-earn',userId],
     queryFn: async () => {
-      const res = await axios.get(`https://edutrust-backend.onrender.com/api/users/auth/getreferrals`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/getreferrals`, {
         withCredentials: true,
       });
       return res.data;

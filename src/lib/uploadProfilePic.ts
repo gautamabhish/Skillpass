@@ -5,7 +5,7 @@ export async function uploadProfileImage(file: File, userId: string): Promise<st
   const public_id = userId; // this becomes the filename
 
   // Get signature from your backend
-  const { data: signatureData } = await axios.post('https://edutrust-backend.onrender.com/api/users/auth/signature', {
+  const { data: signatureData } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/signature`, {
     public_id,
     folder,
   },
@@ -26,7 +26,7 @@ export async function uploadProfileImage(file: File, userId: string): Promise<st
   console.log("Upload response:", uploadRes.data);
   // Returns image URL like:
   // https://res.cloudinary.com/your_cloud/image/upload/users/<userId>.jpg
-  await axios.put("https://edutrust-backend.onrender.com/api/users/auth/update-profile-pic", {
+  await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/update-profile-pic`, {
     profilePicUrl: uploadRes.data.secure_url,
   }, { withCredentials: true });
 

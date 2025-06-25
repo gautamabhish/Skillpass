@@ -9,7 +9,7 @@ export const useFetchQuiz = (id:string) => {
   return useQuery({
     queryKey: ['quiz', id],
     queryFn: async () => {
-      const res = await axios.get(`https://edutrust-backend.onrender.com/api/quiz/fetch/${id}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/fetch/${id}`, {
         withCredentials: true,
       });
       return res.data;

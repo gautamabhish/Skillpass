@@ -6,7 +6,7 @@ export const useGetCreations = () => {
   return useQuery({
     queryKey: ['creations', 'create-quiz'],
     queryFn: async () => {
-        const res = await axios.get('https://edutrust-backend.onrender.com/api/users/auth/get-creations', {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/get-creations`, {
           withCredentials: true,
         });
         return res.data;

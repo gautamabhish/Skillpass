@@ -5,11 +5,11 @@ import axios from 'axios';
 
 export const useDashboard = () => {
   const userId = useAppSelector((state) => state.user.id);
-  console.log("User ID from store:", userId);
+  // console.log("User ID from store:", userId);
   return useQuery({
     queryKey: ['dashboard', userId],
     queryFn: async () => {
-      const res = await axios.get('https://edutrust-backend.onrender.com/api/users/auth/dashboard', {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/dashboard`, {
         params:  {userId} ,
         withCredentials: true,
       });

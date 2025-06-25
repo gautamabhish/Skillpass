@@ -30,7 +30,8 @@ const initialState: UserState = {
 export const signIn = createAsyncThunk(
   'user/signIn',
   async ({ email, password }: { email: string; password: string }, { dispatch }) => {
-    const res = await axios.post('https://edutrust-backend.onrender.com/api/users/auth/login', { email, password }, { withCredentials: true });
+    console.log(process.env)
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/login`, { email, password }, { withCredentials: true });
    const  user  =  res.data.user
 
     dispatch(setUser(user));
@@ -41,8 +42,25 @@ export const signIn = createAsyncThunk(
 export const signUp = createAsyncThunk(
   'user/signUp',
   async ({ name, email, password }: { name: string; email: string; password: string }) => {
-    const res = await axios.post('https://edutrust-backend.onrender.com/api/users/auth/register', { name, email, password });
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/register`, { name, email, password });
     return res.status;
+  }
+);
+// userSlice.ts
+export const verifyOtp = createAsyncThunk(
+  'user/verifyOtp',
+  async ({ email, otp }: { email: string; otp: string }, thunkAPI) => {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/verify-otp`, {
+    email,
+    otp,    
+
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return thunkAPI.rejectWithValue('OTP verification failed');
+    }
+
   }
 );
 

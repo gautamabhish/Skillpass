@@ -135,9 +135,9 @@ const handleSubmit = async () => {
 
           {/* Action Buttons */}
           <div className="flex gap-4 mt-4">
-            <button className="px-4 py-2 text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 transition">
+            {/* <button className="px-4 py-2 text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 transition">
               Preview
-            </button>
+            </button> */}
             {/* <button className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 transition" onClick={handleSubmit}>
               Save Draft
             </button> */}

@@ -8,6 +8,8 @@ import {
   FaTrophy,
   FaUsers,
   FaPercentage,
+
+  FaStar,
   FaDownload,
   FaChartBar,
 } from 'react-icons/fa';
@@ -23,6 +25,30 @@ export default function SubmissionDetailPage() {
 
   const comparisonChartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<Chart.Chart | null>(null);
+
+  const [rating, setRating] = useState<number | null>(null);
+const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+const [ratingSubmitted, setRatingSubmitted] = useState(false);
+
+const handleRating = async (value: number) => {
+  if (isSubmittingRating || ratingSubmitted) return;
+  setRating(value);
+  setIsSubmittingRating(true);
+
+  try {
+    await axios.put(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/edit-rating/${userAttempt.quizId}`,
+      { rating: value },
+      { withCredentials: true }
+    );
+    setRatingSubmitted(true);
+  } catch (err) {
+    console.error('Failed to submit rating', err);
+  } finally {
+    setIsSubmittingRating(false);
+  }
+};
+
 
   useEffect(() => {
     const raw = localStorage.getItem('submissionData');
@@ -40,7 +66,9 @@ export default function SubmissionDetailPage() {
     }
 
     axios
-      .get(`http://localhost:5000/api/quiz/fetch/${attemptId}`, { withCredentials: true })
+      .get(`http://localhost:5000/api/quiz/fetch/${attemptId}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -63,13 +91,15 @@ export default function SubmissionDetailPage() {
       const ctx = comparisonChartRef.current.getContext('2d');
       if (ctx) {
         const { userAttempt, peerStats } = data;
+        const maxScore = userAttempt.totalScore;
+
         const chart = new Chart.Chart(ctx, {
           type: 'bar',
           data: {
             labels: ['Your Score', 'Average Score', 'Highest Score'],
             datasets: [
               {
-                label: 'Percentage',
+                label: 'Score',
                 data: [
                   userAttempt.score,
                   peerStats.averageScore,
@@ -89,9 +119,9 @@ export default function SubmissionDetailPage() {
             scales: {
               y: {
                 beginAtZero: true,
-                max: 100,
-                ticks: { stepSize: 10 },
-                title: { display: true, text: 'Score ' },
+                max: maxScore,
+                ticks: { stepSize: Math.ceil(maxScore / 10) },
+                title: { display: true, text: 'Score' },
               },
             },
           },
@@ -138,21 +168,22 @@ export default function SubmissionDetailPage() {
     peerStats,
     topAttempts,
     certificateIssued,
-    certificateId,
+    certificateId
   } = data;
 
   const started = new Date(userAttempt.startedAt).toLocaleString();
   const finished = new Date(userAttempt.finishedAt).toLocaleString();
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-x-hidden">
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-700 via-blue-900 to-[#2563eb]">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center">
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
             {quizTitle}
           </h1>
-          <div className="flex justify-center items-center gap-6 text-blue-200 flex-wrap">
+          <div className="flex flex-wrap justify-center items-center gap-4 text-blue-200">
             <div className="flex items-center gap-2">
               <FaUsers className="text-xl" />
               <span className="text-sm">Total Attempts: {peerStats.totalAttempts}</span>
@@ -169,87 +200,114 @@ export default function SubmissionDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-12">
-        <section className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
+    <div className="max-w-5xl w-full mx-auto px-4 sm:px-6 py-12 space-y-12 overflow-x-hidden">
+
+        {/* Submission */}
+        <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <FaChartBar className="text-blue-600 text-2xl" /> Your Submission
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="flex justify-between">
+              <div className="flex justify-between flex-wrap">
                 <span className="text-gray-600">Score:</span>
                 <span className="text-4xl font-bold text-green-600">
                   {userAttempt.score}/{userAttempt.totalScore}
                 </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between flex-wrap">
                 <span className="text-gray-600">Started At:</span>
                 <span className="font-semibold">{started}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between flex-wrap">
                 <span className="text-gray-600">Finished At:</span>
                 <span className="font-semibold">{finished}</span>
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center">
-              {certificateIssued && certificateId ? (
-                <Link href={`/certificate/${certificateId}`}>
-                  <div className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition">
-                    <FaDownload className="text-lg" />
-                    Download Certificate
-                  </div>
-                </Link>
-               
-              ) : (
-                <div className="text-gray-600 italic">
-                  No certificate issued.
-                </div>
-              )}
-            </div>
+            <div className="flex flex-col items-center justify-center gap-4 text-center">
+  {/* Rating Feature */}
+  <div className="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto">
+    {/* <div className="text-sm font-medium text-gray-700 mb-2">Rate this quiz</div> */}
+    <div className="flex items-center justify-center gap-1 text-2xl">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          onClick={() => handleRating(star)}
+          disabled={ratingSubmitted}
+          className={`transition ${
+            rating && star <= rating ? 'text-yellow-400' : 'text-gray-300'
+          }`}
+        >
+          <FaStar />
+        </button>
+      ))}
+    </div>
+    {ratingSubmitted && (
+      <p className="text-green-600 text-xs mt-2">Thanks for rating!</p>
+    )}
+  </div>
+
+  {/* Certificate Download */}
+  {certificateIssued && certificateId ? (
+    <Link href={`/certificate/${certificateId}`}>
+      <div className="inline-flex items-center gap-2 bg-purple-600 text-white px-5 py-2 rounded-xl hover:bg-purple-700 transition text-sm sm:text-base">
+        <FaDownload className="text-lg" />
+        Download Certificate
+      </div>
+    </Link>
+  ) : (
+    <div className="text-gray-600 italic text-sm">No certificate issued.</div>
+  )}
+</div>
+
           </div>
         </section>
 
-        <section className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
+        {/* Score Chart */}
+        <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <FaChartBar className="text-green-600 text-2xl" /> Score Comparison
           </h2>
-          <div className="h-64">
-            <canvas ref={comparisonChartRef}></canvas>
-          </div>
+          <div className="relative h-64 sm:h-80 overflow-x-auto">
+  <div className="min-w-[300px] w-full h-full">
+    <canvas ref={comparisonChartRef} className="w-full h-full block" />
+  </div>
+</div>
+
         </section>
 
-        <section className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
+        {/* Top Performers */}
+        <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <FaTrophy className="text-yellow-500 text-2xl" /> Top 5 Performers
           </h2>
           <div className="divide-y divide-gray-200">
-            {topAttempts.map((a:any) => (
-            
-              <div key={a.rank} className="flex justify-between py-3 items-center">
-                <div className="text-gray-700">
+            {topAttempts.map((a: any) => (
+              <div
+                key={a.rank}
+                className="flex justify-between py-3 flex-wrap items-center"
+              >
+                <div className="text-gray-700 text-sm sm:text-base">
                   Rank {a.rank} <span className="font-medium">{a.userName}</span>
                 </div>
-                <div className="text-lg font-semibold text-blue-600">
-                  {a.score}
-                </div>
+                <div className="text-lg font-semibold text-blue-600">{a.score}</div>
               </div>
             ))}
-            <div  className="flex justify-between py-3 text-white items-center bg-blue-500 px-4 border rounded-4xl">
-                <div className="">
-                  Rank {userAttempt.userRank} <span className="font-medium">You</span>
-                </div>
-                <div className="text-lg font-semibold ">
-                  {userAttempt.score}
-                </div>
+            <div className="flex justify-between py-3 text-white items-center bg-blue-500 px-4 border rounded-xl flex-wrap">
+              <div className="text-sm sm:text-base">
+                Rank {userAttempt.userRank} <span className="font-medium">You</span>
               </div>
+              <div className="text-lg font-semibold">{userAttempt.score}</div>
+            </div>
           </div>
         </section>
 
-        <section className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
+        {/* Peer Stats */}
+        <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <FaUsers className="text-green-600 text-2xl" /> Peer Statistics
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             <div className="bg-blue-50 p-4 rounded-xl">
               <FaPercentage className="text-blue-600 text-3xl mb-2" />
               <div className="text-2xl font-bold text-gray-900">

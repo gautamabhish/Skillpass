@@ -10,6 +10,8 @@ import { useParams, useSearchParams } from 'next/navigation'; // Import from nex
 import Image from 'next/image';
 import {
   FaUser,
+  FaRegStar,
+  FaHalfStar,
   FaClock,
   FaStar,
   FaUsers,
@@ -40,7 +42,7 @@ export default  function dataDetailPage(){
 
   const questionTypesChartRef = useRef<HTMLCanvasElement>(null);
   const attemptsChartRef = useRef<HTMLCanvasElement>(null);
-  const ratingsChartRef = useRef<HTMLCanvasElement>(null);
+  // const ratingsChartRef = useRef<HTMLCanvasElement>(null);
 
   // Chart instances (to destroy on cleanup)
   const chartInstancesRef = useRef<Chart.Chart[]>([]);
@@ -49,7 +51,8 @@ export default  function dataDetailPage(){
   const [comment, setComment] = useState('');
   const [referralToken, setReferralToken] = useState('');
 
-  const [rating, setRating] = useState(5);
+  // const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(5); // Default rating
   const [comments, setComments] = useState<any[]>([]);
 
   // "Copied to clipboard" flag
@@ -122,8 +125,9 @@ useEffect(() => {
         chartInstancesRef.current.push(chart);
       }
     }
-
+ 
     // Attempts Chart
+   
     if (attemptsChartRef.current) {
       const ctx = attemptsChartRef.current.getContext('2d');
       if (ctx) {
@@ -166,44 +170,45 @@ useEffect(() => {
     }
 
     // Ratings Distribution Chart
-    if (ratingsChartRef.current && data.analytics.ratings.totalRatings > 0) {
-      const ctx = ratingsChartRef.current.getContext('2d');
-      if (ctx) {
-        // Mock rating distribution for demo - in real app, you'd get this from backend
-        const ratingDist = { 5: 45, 4: 25, 3: 15, 2: 10, 1: 5 };
-        const chart = new Chart.Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['5★', '4★', '3★', '2★', '1★'],
-            datasets: [{
-              label: 'Ratings',
-              data: Object.values(ratingDist),
-              backgroundColor: '#10B981',
-              borderRadius: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1
-                }
-              }
-            }
-          }
-        });
-        chartInstancesRef.current.push(chart);
-      }
-    }
-
+    // if (ratingsChartRef.current && data.analytics.ratings.totalRatings > 0) {
+    //   const ctx = ratingsChartRef.current.getContext('2d');
+    //   if (ctx) {
+    //     // Mock rating distribution for demo - in real app, you'd get this from backend
+    //     const ratingDist = data.analytics.;
+    //     const chart = new Chart.Chart(ctx, {
+    //       type: 'bar',
+    //       data: {
+    //         labels: ['5★', '4★', '3★', '2★', '1★'],
+    //         datasets: [{
+    //           label: 'Ratings',
+    //           data: Object.values(ratingDist),
+    //           backgroundColor: '#10B981',
+    //           borderRadius: 4
+    //         }]
+    //       },
+    //       options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false,
+    //         plugins: {
+    //           legend: {
+    //             display: false
+    //           }
+    //         },
+    //         scales: {
+    //           y: {
+    //             beginAtZero: true,
+    //             ticks: {
+    //               stepSize: 1
+    //             }
+    //           }
+    //         }
+    //       }
+    //     });
+    //     chartInstancesRef.current.push(chart);
+    //   }
+    // }
+   setRating(()=>data.summary.averageRating || 5); // Set initial rating based on data, default to 5 if not available
+   console.log("Rating set to:", data.summary.averageRating );
     return () => {
       chartInstancesRef.current.forEach(chart => chart.destroy());
     };
@@ -222,7 +227,7 @@ useEffect(() => {
       };
       setComments([newComment, ...comments]);
       setComment('');
-      setRating(5);
+     
     } catch (error) {
       console.error('Failed to submit review', error);
     }
@@ -393,7 +398,7 @@ const handleEnroll = async () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-400" />
-                  <span>{data.avgRating}</span>
+                  <span>{data.summary.avgRating}</span>
                   <span className="text-sm">({data.summary.totalRatings} reviews)</span>
                 </div>
               </div>
@@ -511,14 +516,14 @@ const handleEnroll = async () => {
                 </div>
 
                 {/* Ratings Chart */}
-                {data.analytics.ratings.totalRatings > 0 && (
+                {/* {data.analytics.ratings.totalRatings > 0 && (
                   <div className="bg-gray-50 p-4 rounded-xl">
                     <h3 className="font-semibold text-gray-900 mb-4">Rating Distribution</h3>
                     <div className="h-48">
                       <canvas ref={ratingsChartRef}></canvas>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -580,7 +585,27 @@ const handleEnroll = async () => {
                 <FaStar className="text-yellow-500" />
                 Student Reviews
               </h3>
+        <div className="mb-4">
+  {/* <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label> */}
+  <div className="flex gap-1">
+    {[...Array(5)].map((_, index) => {
+      const starValue = index + 1;
+      if (starValue <= Math.floor(rating)) {
+        return <FaStar key={index} className="text-yellow-400 text-xl" />;
+      } else if (
+        starValue === Math.floor(rating) + 1 &&
+        rating - Math.floor(rating) >= 0.25 &&
+        rating - Math.floor(rating) < 0.75
+      ) {
+        return <FaStarHalfAlt key={index} className="text-yellow-400 text-xl" />;
+      } else {
+        return <FaRegStar key={index} className="text-gray-300 text-xl" />;
+      }
+    })}
 
+    </div>
+  
+</div>
               <div className="space-y-4 mb-8">
                 {comments.map((c, i) => (
                   <div
@@ -615,20 +640,8 @@ const handleEnroll = async () => {
                 <h4 className="font-semibold text-gray-900 mb-4">Share your thoughts</h4>
 
                 {/* Rating selector */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => setRating(star)}
-                        className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'} hover:text-yellow-400 transition-colors`}
-                      >
-                        <FaStar />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+        
+
 
                 <textarea
                   className="w-full border-2 border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"

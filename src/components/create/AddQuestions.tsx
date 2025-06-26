@@ -169,30 +169,40 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
                   )
                 )}
               </select>
+<input
+  type="text"
+  inputMode="numeric"
+  pattern="^[1-9][0-9]*$"
+  placeholder="Points"
+  className="w-24 px-2 py-1 border border-[#239102] rounded text-sm"
+  value={q.points === 0 ? '' : q.points}
+  onChange={(e) => {
+    const val = e.target.value;
+    // Allow empty string (for erasing) or valid positive integers only (no leading zeros)
+    if (val === '' || /^[1-9][0-9]*$/.test(val)) {
+      handleQuestionChange(index, 'points', val);
+    }
+  }}
+  title={`Assigned Points: ${q.points}`}
+/>
 
-              <input
-                type="number"
-                inputMode="numeric"
-                placeholder="Points"
-                className="w-24 px-2 py-1 border border-[#b7bbbe] rounded text-sm"
-                value={q.points}
-                onChange={(e) =>
-                  handleQuestionChange(index, 'points', e.target.value)
-                }
-                title={`Assigned Points: ${q.points}`}
-              />
+<input
+  type="text"
+  inputMode="numeric"
+  pattern="^[1-9][0-9]*$"
+  placeholder="Points"
+  className="w-24 px-2 py-1 border border-[#c41f1f] rounded text-sm text-red-500"
+  value={q.negPoints === 0 ? '' : q.negPoints}
+  onChange={(e) => {
+    const val = e.target.value;
+    // Allow empty string (for erasing) or valid positive integers only (no leading zeros)
+    if (val === '' || /^[1-9][0-9]*$/.test(val)) {
+      handleQuestionChange(index, 'negPoints', val);
+    }
+  }}
+  title={`Assigned Points: ${q.negPoints}`}
+/>
 
-              <input
-                type="number"
-                inputMode="numeric"
-                placeholder="0"
-                className="w-28 px-2 py-1 border border-[#b7bbbe] text-red-500 rounded text-sm font-bold"
-                value={q.negPoints}
-                onChange={(e) =>
-                  handleQuestionChange(index, 'negPoints', e.target.value)
-                }
-                title={`Negative Points: ${q.negPoints}`}
-              />
             </div>
 
             <Input

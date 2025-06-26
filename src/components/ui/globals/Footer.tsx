@@ -22,17 +22,17 @@ const Footer = () => {
             <h2 className="text-lg font-semibold mb-4">Product</h2>
             <ul>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/product#Overview" className="text-gray-700 hover:text-[#3277ee] transition">
                   Overview
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/product#features" className="text-gray-700 hover:text-[#3277ee] transition">
                   Features
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/product#pricing" className="text-gray-700 hover:text-[#3277ee] transition">
                   Pricing
                 </a>
               </li>
@@ -44,11 +44,11 @@ const Footer = () => {
             <h2 className="text-lg font-semibold mb-4">Company</h2>
             <ul>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/about" className="text-gray-700 hover:text-[#3277ee] transition">
                   About
                 </a>
               </li>
-              <li className="mb-2">
+              {/* <li className="mb-2">
                 <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
                   Blog
                 </a>
@@ -57,9 +57,9 @@ const Footer = () => {
                 <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
                   Careers
                 </a>
-              </li>
+              </li> */}
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="https://discord.gg/seuzp8Ms" target='blank' className="text-gray-700 hover:text-[#3277ee] transition">
                   Connect
                 </a>
               </li>
@@ -71,22 +71,22 @@ const Footer = () => {
             <h2 className="text-lg font-semibold mb-4">Legal & Help</h2>
             <ul>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/legal" className="text-gray-700 hover:text-[#3277ee] transition">
                   Terms of Service
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/legal" className="text-gray-700 hover:text-[#3277ee] transition">
                   Privacy Policy
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/legal" className="text-gray-700 hover:text-[#3277ee] transition">
                   Support
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-gray-700 hover:text-[#3277ee] transition">
+                <a href="/legal" className="text-gray-700 hover:text-[#3277ee] transition">
                   Contact Us
                 </a>
               </li>

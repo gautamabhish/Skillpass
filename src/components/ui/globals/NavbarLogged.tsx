@@ -44,7 +44,7 @@ const NavbarLogged = () => {
       {/* Right Side */}
       <div className="flex items-center mr-8 gap-6 relative">
         {/* Notification Bell */}
-        <div className="cursor-pointer">
+        {/* <div className="cursor-pointer">
           <svg
             className="w-6 h-6 text-gray-600"
             fill="none"
@@ -58,7 +58,7 @@ const NavbarLogged = () => {
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-3.866-2.239-7-5-7S8 7.134 8 11v3.159c0 .538-.214 1.055-.595 1.436L6 17h5m4 0v1a3 3 0 11-6 0v-1m6 0H9"
             />
           </svg>
-        </div>
+        </div> */}
 
         {/* Hidden File Input */}
         <input

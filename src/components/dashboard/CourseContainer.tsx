@@ -5,6 +5,7 @@ import RecommendCard from '@/components/ui/dashboard/RecommendedCard';
 import { useDashboard } from '@/hooks/useDashbaord';
 import { Compass, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { OwnedCard } from '../ui/dashboard/Ownedcard';
 
 function CourseContainer() {
   const { data, isLoading } = useDashboard();
@@ -37,7 +38,7 @@ function CourseContainer() {
         ) : quizzes.length > 0 ? (
           quizzes.map((quiz: any, idx: number) => (
             <div key={quiz.id || idx} className="w-full max-w-sm">
-              <RecommendCard
+              <OwnedCard
                 id={quiz.id}
                 image={quiz.thumbnail || "/placeholder.png"}
                 tag={quiz.tag || ""}
@@ -45,7 +46,9 @@ function CourseContainer() {
                 title={quiz.title}
                 description={quiz.description}
                 time={quiz.duration}
-                price={quiz.price}
+                // price={quiz.price}
+                authorName={quiz.creatorName}      
+                // authorAvatar={}          
               />
             </div>
           ))

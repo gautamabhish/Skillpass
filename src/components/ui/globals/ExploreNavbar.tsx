@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import HamburgerMenu from './Hamburger';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAppSelector } from '@/store/hooks';
 const inter = Inter({ subsets: ['latin'] });
 
 // Mock data to simulate suggestions
@@ -13,7 +14,7 @@ const sampleSuggestions = ['Create Quiz jdschkchakshkcbdbmjcjsjbdschkchakshkcbdb
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
-
+ const user = useAppSelector((state) => state.user);
   const filteredSuggestions = sampleSuggestions.filter(item =>
     item.toLowerCase().includes(query.toLowerCase())
   );
@@ -25,8 +26,8 @@ const Navbar = () => {
         SkillPass
       </Link>
 
-      
-        <HamburgerMenu />
+      {user?
+        <HamburgerMenu />:null}
     </nav>
   );
 };

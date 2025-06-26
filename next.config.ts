@@ -6,9 +6,10 @@ const nextConfig: NextConfig = {
 
    ],
    images: {  
-    domains: [
-      'avatar.iran.liara.run',
-      'res.cloudinary.com',
+    remotePatterns: [
+      {protocol:'https',
+        hostname:'**'
+      }
     ]
    },
      eslint: {

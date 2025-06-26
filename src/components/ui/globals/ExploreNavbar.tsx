@@ -14,7 +14,7 @@ const sampleSuggestions = ['Create Quiz jdschkchakshkcbdbmjcjsjbdschkchakshkcbdb
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
- const user = useAppSelector((state) => state.user);
+ const user  = useAppSelector((state) => state.user.id);
   const filteredSuggestions = sampleSuggestions.filter(item =>
     item.toLowerCase().includes(query.toLowerCase())
   );
@@ -27,7 +27,11 @@ const Navbar = () => {
       </Link>
 
       {user?
-        <HamburgerMenu />:null}
+        <HamburgerMenu />:
+        <div className="flex items-center gap-4">
+          <Link href="/sign-in" className="text-blue-600 ">Login
+          </Link>
+          </div>}
     </nav>
   );
 };

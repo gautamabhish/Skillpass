@@ -11,7 +11,7 @@ import Footer from '@/components/ui/globals/Footer';
 import SearchBar from '@/components/ui/globals/SearchBar';
 import { Trending } from '@/components/explore/Trending';
 import { useExplore } from '@/hooks/useExplore';
-import { useQuizTitleFetch } from '@/hooks/useQuizTitleFetch';
+import { useQuizTagFetch } from '@/hooks/useQuizTagFetch';
 import { useAppSelector } from '@/store/hooks';
 
 type Quiz = {
@@ -36,7 +36,7 @@ const [searchTerm, setSearchTerm] = useState<string>('');
 const [filtered, setFiltered] = useState<Quiz[]>([]);
 const [showAll, setShowAll] = useState<boolean>(false);
 
-const { data: searchedQuizzes, refetch: refetchSearch, isFetching } = useQuizTitleFetch(searchTerm);
+const { data: searchedQuizzes, refetch: refetchSearch, isFetching } = useQuizTagFetch(searchTerm);
 
 // 🔁 All quizzes initially
 const { data, isLoading, isError } = useExplore();

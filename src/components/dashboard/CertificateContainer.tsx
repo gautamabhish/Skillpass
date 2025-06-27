@@ -38,7 +38,7 @@ function CertificatesContainer() {
           certificates.map((cert: any, idx: number) => (
             <div key={idx} className="w-full max-w-sm">
               <CertificateCard
-                image="/certificate-default.png"
+                image="/certificateDefault.png"
                 title={cert.userName}
                 id={cert.id}
                 completed={`Scored ${cert.score} - ${new Date(cert.issuedAt).toLocaleDateString()}`}

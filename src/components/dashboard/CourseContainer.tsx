@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from 'react';
 import RecommendCard from '@/components/ui/dashboard/RecommendedCard';
@@ -12,17 +12,17 @@ function CourseContainer() {
   const quizzes = data?.userQuizzes || [];
 
   return (
-    <section className="flex flex-col gap-4 mt-4  sm:px-6 md:px-20 py-6">
+    <section className="flex flex-col gap-4 mt-4 px-4 sm:px-6 md:px-20 py-6">
       <h1 className="text-2xl font-bold flex items-center gap-2">
         Owned By You
       </h1>
 
-      <div className="w-full grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 mt-4 place-items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 place-items-center">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="bg-white shadow-md rounded-2xl p-6 animate-pulse flex flex-col gap-4 w-full max-w-sm"
+              className="shadow-md rounded-2xl p-6 animate-pulse flex flex-col gap-4 w-full max-w-sm"
             >
               <div className="flex justify-between items-center">
                 <div className="bg-gray-200 w-24 h-4 rounded"></div>
@@ -40,15 +40,13 @@ function CourseContainer() {
             <div key={quiz.id || idx} className="w-full max-w-sm">
               <OwnedCard
                 id={quiz.id}
-                image={quiz.thumbnail || "/placeholder.png"}
+                image={quiz.thumbnailURL || "https://static.vecteezy.com/system/resources/previews/011/066/660/original/quiz-time-button-quiz-time-speech-bubble-quiz-time-text-web-template-illustration-vector.jpg"}
                 tag={quiz.tag || ""}
                 color={quiz.color || ""}
                 title={quiz.title}
                 description={quiz.description}
                 time={quiz.duration}
-                // price={quiz.price}
-                authorName={quiz.creatorName}      
-                // authorAvatar={}          
+                authorName={quiz.creatorName}     
               />
             </div>
           ))

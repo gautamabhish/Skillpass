@@ -32,10 +32,12 @@ import {
   FaPercentage
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { stat } from 'fs';
 
 export default  function dataDetailPage(){ 
   const router = useRouter();
     const routerParams = useParams();
+    const userName  = useAppSelector ((state)=>state.user.name)
   const { data, isLoading } = useFetchQuiz(routerParams.id as string);
 
   // Chart refs
@@ -207,32 +209,35 @@ useEffect(() => {
     //     chartInstancesRef.current.push(chart);
     //   }
     // }
-   setRating(()=>data.summary.averageRating || 5); // Set initial rating based on data, default to 5 if not available
-   console.log("Rating set to:", data.summary.averageRating );
+    // console.log(data)
+   setRating(()=>data.summary.averageRating || 5); 
+   setComments(()=>data.analytics.comments.top5Comments)// Set initial rating based on data, default to 5 if not available
+  //  console.log("Rating set to:", data.summary.averageRating );
     return () => {
       chartInstancesRef.current.forEach(chart => chart.destroy());
     };
   }, [data]);
 
-  const handleCommentSubmit = async () => {
-    if (!comment.trim()) return;
+const handleCommentSubmit = async () => {
+  if (!comment.trim()) return;
 
-    try {
-      // In real app, submit to backend
-      const newComment = {
-        rating,
-        comment,
-        createdAt: new Date().toISOString(),
-        user: { name: 'Demo User' }
-      };
-      setComments([newComment, ...comments]);
-      setComment('');
-     
-    } catch (error) {
-      console.error('Failed to submit review', error);
-    }
-  };
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/add-comment/${data.id}`, 
+      { comment },
+      { withCredentials: true }
+    );
 
+    // Assuming the backend returns the updated quiz or comment list
+    const newComment = {...response.data, userName}; 
+    
+
+    setComments([newComment, ...comments]);
+    setComment('');
+  } catch (error) {
+    console.error('Failed to submit comment', error);
+  }
+};
   const handleShare = async () => {
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/data/${data?.id}`;
     try {
@@ -397,8 +402,23 @@ const handleEnroll = async () => {
                   <span>{data.summary.totalAttempts} attempts</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <FaStar className="text-yellow-400" />
-                  <span>{data.summary.avgRating}</span>
+                    <div className="flex gap-1">
+    {[...Array(5)].map((_, index) => {
+      const starValue = index + 1;
+      if (starValue <= Math.floor(rating)) {
+        return <FaStar key={index} className="text-yellow-400 text-xl" />;
+      } else if (
+        starValue === Math.floor(rating) + 1 &&
+        rating - Math.floor(rating) >= 0.25 &&
+        rating - Math.floor(rating) < 0.75
+      ) {
+        return <FaStarHalfAlt key={index} className="text-yellow-400 text-xl" />;
+      } else {
+        return <FaRegStar key={index} className="text-gray-300 text-xl" />;
+      }
+    })}
+
+    </div>
                   <span className="text-sm">({data.summary.totalRatings} reviews)</span>
                 </div>
               </div>
@@ -445,286 +465,244 @@ const handleEnroll = async () => {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* data Analytics */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                  <FaChartLine className="text-white text-sm" />
-                </div>
-                 Analytics
-              </h2>
+       <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+  {/* Data Analytics */}
+  <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">
+    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+        <FaChartLine className="text-white text-xs sm:text-sm" />
+      </div>
+      Analytics
+    </h2>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <FaQuestionCircle className="text-blue-600 text-xl" />
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900">{data.summary.totalQuestions}</div>
-                      <div className="text-sm text-gray-600">Questions</div>
-                    </div>
-                  </div>
-                </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      {/* Cards */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <FaQuestionCircle className="text-blue-600 text-lg sm:text-xl" />
+          <div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{data.summary.totalQuestions}</div>
+            <div className="text-xs sm:text-sm text-gray-600">Questions</div>
+          </div>
+        </div>
+      </div>
 
-                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <FaUsers className="text-green-600 text-xl" />
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900">{data.summary.totalAttempts}</div>
-                      <div className="text-sm text-gray-600">Total Attempts</div>
-                    </div>
-                  </div>
-                </div>
+      <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <FaUsers className="text-green-600 text-lg sm:text-xl" />
+          <div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{data.summary.totalAttempts}</div>
+            <div className="text-xs sm:text-sm text-gray-600">Total Attempts</div>
+          </div>
+        </div>
+      </div>
 
-                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <FaPercentage className="text-yellow-600 text-xl" />
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900">{data.summary.averageScore}%</div>
-                      <div className="text-sm text-gray-600">Avg Score</div>
-                    </div>
-                  </div>
-                </div>
+      <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <FaPercentage className="text-yellow-600 text-lg sm:text-xl" />
+          <div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{data.summary.averageScore}%</div>
+            <div className="text-xs sm:text-sm text-gray-600">Avg Score</div>
+          </div>
+        </div>
+      </div>
 
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <FaCertificate className="text-purple-600 text-xl" />
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900">{data.summary.certificatesIssued}</div>
-                      <div className="text-sm text-gray-600">Certificates</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Charts */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Question Types Chart */}
-                <div className="bg-gray-50 p-4 rounded-xl">
-                  <h3 className="font-semibold text-gray-900 mb-4">Question Types</h3>
-                  <div className="h-48">
-                    <canvas ref={questionTypesChartRef}></canvas>
-                  </div>
-                </div>
-
-                {/* Attempts Chart */}
-                <div className="bg-gray-50 p-4 rounded-xl">
-                  <h3 className="font-semibold text-gray-900 mb-4">Attempt Status</h3>
-                  <div className="h-48">
-                    <canvas ref={attemptsChartRef}></canvas>
-                  </div>
-                </div>
-
-                {/* Ratings Chart */}
-                {/* {data.analytics.ratings.totalRatings > 0 && (
-                  <div className="bg-gray-50 p-4 rounded-xl">
-                    <h3 className="font-semibold text-gray-900 mb-4">Rating Distribution</h3>
-                    <div className="h-48">
-                      <canvas ref={ratingsChartRef}></canvas>
-                    </div>
-                  </div>
-                )} */}
-              </div>
-            </div>
-
-            {/* data Details */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                  <FaGraduationCap className="text-white text-sm" />
-                </div>
-            Overview 
-              </h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Points:</span>
-                    <span className="font-semibold">{data.summary.totalPoints}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Duration:</span>
-                    <span className="font-semibold">{data.duration} minutes</span>
-                  </div>
-                  {/* <div className="flex justify-between">
-                    <span className="text-gray-600">Difficulty:</span>
-                    <span className={`px-2 py-1 rounded text-sm font-medium ${getDifficultyColor(data.difficulty)}`}>
-                      {data.difficulty}
-                    </span>
-                  </div> */}
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Backtrack Allowed:</span>
-                    <span className="font-semibold">{data.backtrack ? 'Yes' : 'No'}</span>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Questions Randomized:</span>
-                    <span className="font-semibold">{data.randomize ? 'Yes' : 'No'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Completion Rate:</span>
-                    <span className="font-semibold">{data.summary.completionRate}%</span>
-                  </div>
-                  {/* <div className="flex justify-between">
-                    <span className="text-gray-600">Pass Rate:</span>
-                    <span className="font-semibold">{data.summary.passRate}%</span>
-                  </div> */}
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Created:</span>
-                    <span className="font-semibold">
-                      {new Date(data.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Reviews & Comments */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <FaStar className="text-yellow-500" />
-                Student Reviews
-              </h3>
-        <div className="mb-4">
-  {/* <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label> */}
-  <div className="flex gap-1">
-    {[...Array(5)].map((_, index) => {
-      const starValue = index + 1;
-      if (starValue <= Math.floor(rating)) {
-        return <FaStar key={index} className="text-yellow-400 text-xl" />;
-      } else if (
-        starValue === Math.floor(rating) + 1 &&
-        rating - Math.floor(rating) >= 0.25 &&
-        rating - Math.floor(rating) < 0.75
-      ) {
-        return <FaStarHalfAlt key={index} className="text-yellow-400 text-xl" />;
-      } else {
-        return <FaRegStar key={index} className="text-gray-300 text-xl" />;
-      }
-    })}
-
+      <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <FaCertificate className="text-purple-600 text-lg sm:text-xl" />
+          <div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{data.summary.certificatesIssued}</div>
+            <div className="text-xs sm:text-sm text-gray-600">Certificates</div>
+          </div>
+        </div>
+      </div>
     </div>
-  
-</div>
-              <div className="space-y-4 mb-8">
-                {comments.map((c, i) => (
-                  <div
-                    key={i}
-                    className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-xl border-l-4 border-blue-600"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
-                        <FaUser className="text-white text-sm" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{c.user?.name || 'Anonymous'}</div>
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, idx) => (
-                            <FaStar
-                              key={idx}
-                              className={`text-sm ${idx < c.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="ml-auto text-sm text-gray-500">
-                        {new Date(c.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <p className="text-gray-700">{c.comment}</p>
-                  </div>
-                ))}
-              </div>
 
-              <div className="border-t pt-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Share your thoughts</h4>
+    {/* Charts */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="bg-gray-50 p-3 sm:p-4 rounded-xl">
+        <h3 className="font-semibold text-gray-900 mb-2 sm:mb-4">Question Types</h3>
+        <div className="h-40 sm:h-48">
+          <canvas ref={questionTypesChartRef}></canvas>
+        </div>
+      </div>
 
-                {/* Rating selector */}
-        
+      <div className="bg-gray-50 p-3 sm:p-4 rounded-xl">
+        <h3 className="font-semibold text-gray-900 mb-2 sm:mb-4">Attempt Status</h3>
+        <div className="h-40 sm:h-48">
+          <canvas ref={attemptsChartRef}></canvas>
+        </div>
+      </div>
 
+      {/* <div className="bg-gray-50 p-3 sm:p-4 rounded-xl">
+        <h3 className="font-semibold text-gray-900 mb-2 sm:mb-4">Rating Distribution</h3>
+        <div className="h-40 sm:h-48">
+          <canvas ref={ratingsChartRef}></canvas>
+        </div>
+      </div> */}
+    </div>
+  </div>
 
-                <textarea
-                  className="w-full border-2 border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
-                  placeholder="Write your review..."
-                  rows={4}
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                />
-                <button
-                  onClick={handleCommentSubmit}
-                  className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold transition-all transform hover:scale-105 shadow-lg"
-                >
-                  Submit Review
-                </button>
-              </div>
+  {/* Data Details */}
+  <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">
+    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+        <FaGraduationCap className="text-white text-xs sm:text-sm" />
+      </div>
+      Overview
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-2 sm:space-y-4">
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Total Points:</span>
+          <span className="font-semibold">{data.summary.totalPoints}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Duration:</span>
+          <span className="font-semibold">{data.duration} minutes</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Backtrack Allowed:</span>
+          <span className="font-semibold">{data.backtrack ? 'Yes' : 'No'}</span>
+        </div>
+      </div>
+      <div className="space-y-2 sm:space-y-4">
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Questions Randomized:</span>
+          <span className="font-semibold">{data.randomize ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Completion Rate:</span>
+          <span className="font-semibold">{data.summary.completionRate}%</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-xs sm:text-sm text-gray-600">Created:</span>
+          <span className="font-semibold">
+            {new Date(data.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Reviews & Comments */}
+  <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">
+    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+      <FaStar className="text-yellow-500" />
+      Student Reviews
+    </h3>
+
+    <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+      {comments.map((c, i) => (
+        <div
+          key={c.id || i}
+          className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 sm:p-6 rounded-xl border-l-4 border-blue-600"
+        >
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+              <FaUser className="text-white text-xs sm:text-sm" />
+            </div>
+            <div>
+              <div className="font-semibold text-gray-900">{c.userName || 'Anonymous'}</div>
+              {c.rating !== undefined && (
+                <div className="flex items-center gap-0.5 sm:gap-1">
+                  {[...Array(5)].map((_, idx) => (
+                    <FaStar
+                      key={idx}
+                      className={`text-xs sm:text-sm ${idx < c.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="ml-auto text-xs sm:text-sm text-gray-500">
+              {new Date(c.createdAt).toLocaleDateString()}
             </div>
           </div>
+          <p className="text-xs sm:text-sm text-gray-700">{c.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="border-t pt-4 sm:pt-6">
+      <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4">Share your thoughts</h4>
+      <textarea
+        className="w-full border-2 border-gray-200 rounded-xl p-3 sm:p-4 text-xs sm:text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
+        placeholder="Write your review..."
+        rows={3}
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+      />
+      <button
+        onClick={handleCommentSubmit}
+        className="mt-3 sm:mt-4 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold transition-all transform hover:scale-105 shadow-lg"
+      >
+        Submit Review
+      </button>
+    </div>
+  </div>
+</div>
+
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Pricing Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 sticky top-6">
-  <div className="text-center mb-6">
-    <div className="flex items-center justify-center gap-3 mb-2">
-      <span className="text-3xl font-bold text-gray-900">
+   <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100 sticky top-6">
+  <div className="text-center mb-4 sm:mb-6">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-2">
+      <span className="text-2xl sm:text-3xl font-bold text-gray-900">
         {data.currency === 'INR' ? '₹' : '$'}
         {data.price}
       </span>
       {data.price === 0 && (
-        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+        <span className="bg-green-100 text-green-800 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold">
           FREE
         </span>
       )}
     </div>
   </div>
 
-  <div className="space-y-4 mb-6">
+  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
     <button
       onClick={handleEnroll}
-      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
+      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 sm:py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold text-base sm:text-lg transition-all transform hover:scale-105 shadow-lg"
     >
       {data.price === 0 ? 'Start Now' : 'Enroll Now'}
     </button>
   </div>
 
-{/* Wrap both referral input and share button in a div with consistent bottom margin */}
-<div className="space-y-4 mb-6">
-  {data.price > 0 && (
-    <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 px-4 py-3 rounded-xl shadow-sm">
-      <FaGift className="text-blue-600 text-xl" />
-      <div className="w-full">
+  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+    {data.price > 0 && (
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 bg-blue-50 border border-blue-200 px-3 sm:px-4 py-2 sm:py-3 rounded-xl shadow-sm">
+        <FaGift className="text-blue-600 text-lg sm:text-xl" />
         <input
           type="text"
           value={referralToken}
           onChange={(e) => setReferralToken(e.target.value)}
           placeholder="Enter referral token"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="w-full px-2 py-1.5 sm:px-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
         />
       </div>
-    </div>
-  )}
+    )}
+  </div>
 
-  
-</div>
-
-
-  <div className="flex gap-2 mb-6">
+  <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-6">
     <button
       onClick={handleShare}
-      className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-all"
+      className="flex-1 flex items-center justify-center gap-1 sm:gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 sm:py-3 rounded-xl font-medium transition-all"
     >
       <FaShareAlt />
-      Share
+      <span>Share</span>
     </button>
   </div>
 
   {copied && (
-    <div className="text-center py-2 px-4 bg-green-100 text-green-800 rounded-lg text-sm font-medium mb-4">
+    <div className="text-center py-1.5 sm:py-2 px-3 sm:px-4 bg-green-100 text-green-800 rounded-lg text-xs sm:text-sm font-medium mb-3 sm:mb-4">
       Link copied to clipboard!
     </div>
   )}
 
-  <div className="border-t pt-6 space-y-3 text-sm text-gray-600">
+  <div className="border-t pt-4 sm:pt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-600">
     <div className="flex justify-between">
       <span>Questions:</span>
       <span className="font-medium">{data.summary.totalQuestions}</span>
@@ -737,14 +715,15 @@ const handleEnroll = async () => {
       <span>Difficulty:</span>
       <span className="font-medium">{data.difficulty}</span>
     </div>
-    {/* Uncomment if you want to show Pass Rate
+    {/* 
     <div className="flex justify-between">
       <span>Pass Rate:</span>
       <span className="font-medium text-green-600">{data.summary.passRate}%</span>
-    </div>
+    </div> 
     */}
   </div>
 </div>
+
 
 
             {/* Stats Card */}

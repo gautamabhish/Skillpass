@@ -14,7 +14,7 @@ export const useFetchQuiz = (id:string) => {
       });
       return res.data;
     },
-    enabled: !!id,
-    staleTime: 1000 * 60 * 5,
+    enabled: !!id, // prevents running query until id exists
+    staleTime:  1000*60*5,
   });
 };

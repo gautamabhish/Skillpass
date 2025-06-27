@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FaRegClock, FaShareAlt } from 'react-icons/fa';
 import clsx from 'clsx';
 import Image from 'next/image';
-import axios from 'axios';
+
 interface cardData {
   id: string;
   image: string;
@@ -39,11 +39,9 @@ function RecommendCard(props: cardData) {
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `${window.location.origin}/explore/${id}`;
-    const text = `${title} - Check this out: ${url}`;
-
     if (navigator.share) {
       try {
-        await navigator.share({ title, text, url });
+        await navigator.share({ title, text: `${title} - Check this out: ${url}`, url });
       } catch (err) {
         console.error('Share failed:', err);
       }
@@ -57,43 +55,19 @@ function RecommendCard(props: cardData) {
     }
   };
 
-
-
-const handleStart = async (e: React.MouseEvent) => {
-  e.stopPropagation();
-
-  try {
-    // const res = await axios.post(
-    //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/session/start`,
-    //   { quizId: id },
-    //   {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     withCredentials: true, // 🔥 allows cookies to be sent/received
-    //   }
-    // );
-
-    // if (res.status === 200) {
-    //   router.push(`/session/${id}`);
-    // } else {
-    //   alert(res.data?.message || 'Failed to start session');
-    // }
+  const handleStart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     router.push(`/session/${id}`);
-  } catch (err: any) {
-    console.error('Start failed:', err);
-    alert(err?.response?.data?.message || 'Something went wrong. Try again.');
-  }
-};
-
+  };
 
   return (
-    <div
-      className="bg-white rounded-2xl shadow-md overflow-hidden transition hover:opacity-90 duration-300 w-[90%] sm:w-[300px] md:w-[400px] cursor-pointer"
-      onClick={() => router.push(`/explore/${id}`)}
-    >
-      <div className="relative">
-        <img src={image} alt={title} className="w-full h-44 md:h-52 object-cover" />
+   <div
+  className="bg-white rounded-2xl shadow-md overflow-hidden transition hover:opacity-90 duration-300 w-[90%] sm:w-[300px] md:w-[350px] flex flex-col cursor-pointer h-[380px]"
+  onClick={() => router.push(`/explore/${id}`)}
+>
+
+      <div className="relative w-full h-44 md:h-52">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
         {verified && (
           <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
             Verified
@@ -104,9 +78,9 @@ const handleStart = async (e: React.MouseEvent) => {
         </span>
       </div>
 
-      <div className="p-4 space-y-2">
+      <div className="p-4 flex flex-col flex-1">
         {/* Author Info */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
           <Image
             src={authorAvatar}
             height={80}
@@ -119,16 +93,17 @@ const handleStart = async (e: React.MouseEvent) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
 
-        {/* Description */}
-        <div className="relative group">
-          <p className="text-sm text-gray-500 line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
-            {description}
-          </p>
-        </div>
+        {/* Description (reserve space always) */}
+       <p className="text-sm text-gray-500 line-clamp-2">
+  {description || 'No description available.'}
+</p>
 
-        {/* Time + Start Button + Share */}
+        {/* Spacer */}
+        <div className="flex-grow" />
+
+        {/* Time + Start + Share */}
         <div className="flex items-center justify-between pt-2 text-sm text-gray-400">
           <span className="flex items-center gap-1">
             <FaRegClock />
@@ -155,5 +130,4 @@ const handleStart = async (e: React.MouseEvent) => {
   );
 }
 
-export { RecommendCard as OwnedCard }; ;
- 
+export { RecommendCard as OwnedCard };

@@ -27,7 +27,7 @@ type AnsweredAndMarked = number[];          // array of question indices
 
 export default function JEEStyleQuizInterface({ id }: { id: string }) {
   const { data, isLoading } = useFetchQuizPaid(id);
-  console.log('Quiz data:', data);
+  // console.log('Quiz data:', data);
   const userName = useAppSelector((s) => s.user.name);
   const userId = useAppSelector((s) => s.user.id);
   const router = useRouter();

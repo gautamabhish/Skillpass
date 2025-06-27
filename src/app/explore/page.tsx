@@ -61,7 +61,7 @@ const handleSearchSubmit = async () => {
 ///tegory filter only (no searchTerm filtering here)
  useEffect(() => {
     if (selectedCategory === 'All Categories') {
-      console.log(allQuizzes)
+      // console.log(allQuizzes)
       setFiltered(allQuizzes);
     } else {
      const result = allQuizzes.filter(q =>

@@ -49,7 +49,7 @@ const handleVideoUpload = async (file: File) => {
     //   ...prevData,
     //   videoURL: response.data.secure_url, // Uploaded video URL
     // }));
-    console.log('Video upload successful:', response.data.secure_url);
+    // console.log('Video upload successful:', response.data.secure_url);
     return response.data.secure_url
 
 
@@ -78,7 +78,7 @@ const handleAudioUpload = async (file: File) => {
     //   ...prevData,
     //   audioURL: response.data.secure_url, // Uploaded audio URL
     // }));
-    console.log('Audio upload successful:', response.data.secure_url);
+    // console.log('Audio upload successful:', response.data.secure_url);
     return response.data.secure_url
 
   } catch (error) {

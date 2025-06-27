@@ -30,7 +30,7 @@ const initialState: UserState = {
 export const signIn = createAsyncThunk(
   'user/signIn',
   async ({ email, password }: { email: string; password: string }, { dispatch }) => {
-    console.log(process.env)
+    // console.log(process.env)
     const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/login`, { email, password }, { withCredentials: true });
    const  user  =  res.data.user
 

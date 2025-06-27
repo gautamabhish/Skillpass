@@ -8,7 +8,7 @@ import { useDashboard } from '@/hooks/useDashbaord';
 
 function CardContainer() {
   const { data, isLoading } = useDashboard();
-  console.log("Dashboard Data:", data);
+  // console.log("Dashboard Data:", data);
   const cardData = data ? [
     {
       title: "Total Points",

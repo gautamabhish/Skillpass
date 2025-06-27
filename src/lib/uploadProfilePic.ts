@@ -23,7 +23,7 @@ export async function uploadProfileImage(file: File, userId: string): Promise<st
     `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
     formData
   );
-  console.log("Upload response:", uploadRes.data);
+  // console.log("Upload response:", uploadRes.data);
   // Returns image URL like:
   // https://res.cloudinary.com/your_cloud/image/upload/users/<userId>.jpg
   await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/update-profile-pic`, {

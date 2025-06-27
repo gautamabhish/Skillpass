@@ -37,7 +37,7 @@ const NavbarLogged = () => {
     <nav className="flex justify-between items-center p-4 bg-white relative">
       {/* Branding */}
       <div className="ml-8 text-2xl flex gap-4 font-bold text-[#095ef1]">
-        <img src="./globe.svg" className="h-8 w-8 object-cover" alt="Logo" />
+        {/* <img src="/globe.png" className="h-12 w-12 object-cover  grayscale-100 "  alt="Logo" /> */}
         <div>SkillPass</div>
       </div>
 

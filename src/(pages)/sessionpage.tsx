@@ -7,6 +7,7 @@ import { useFetchQuizPaid } from '@/hooks/useFetchQuizPaid';
 import TimerDisplay from '@/components/ui/globals/Timer';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import ExploreLoading from '@/app/loading';
 
 type Question = {
   id: number;
@@ -37,7 +38,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
   const quizTitle = data?.title || 'Quiz';
   const timeLimitInMinutes = data?.timeLimit || 60;
   const quizStartedAtMs = data?.staredAt || Date.now();
-
+  const disableBackButton = data?.bactrack||false
   // Local UI state
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState<Answers>({});
@@ -304,9 +305,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-gray-400">Loading quiz...</div>
-      </div>
+     <ExploreLoading/>
     );
   }
 
@@ -466,8 +465,11 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
           {/* Bottom Navigation */}
           <div className="flex justify-between items-center mt-12">
             <button
-              className="bg-gray-300 text-gray-500 px-4 py-2 text-xs font-semibold cursor-not-allowed"
-              disabled
+              className="bg-gray-300 text-gray-700 px-4 py-2 text-xs font-semibold cursor-not-allowed"
+              disabled={!disableBackButton  }
+              onClick={() =>
+                currentQuestion >1 &&
+                setCurrentQuestion(()=>currentQuestion -1)}
             >
               {'<< BACK'}
             </button>
@@ -479,7 +481,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
               }
               onClick={() =>
                 currentQuestion < totalQuestions &&
-                setCurrentQuestion(currentQuestion + 1)
+                setCurrentQuestion(()=>currentQuestion + 1)
               }
             >
               {'NEXT >>'}

@@ -13,7 +13,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user || !user.id) {
       // Not logged in → back to home or login
-      router.push('/');
+      router.push('/sign-in');
     }
   }, [user, router]);
 

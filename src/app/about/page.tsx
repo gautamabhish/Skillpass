@@ -61,7 +61,7 @@ const AboutAndSupportPage: React.FC = () => {
               <p className="text-[#4662a0] text-sm">
                 Can’t find what you’re looking for? Email our support team at{' '}
                 <a className="text-blue-600 hover:underline" href="mailto:support@yourapp.com">
-                  support@yourapp.com
+                  support@skillpass.org
                 </a>
                 .
               </p>

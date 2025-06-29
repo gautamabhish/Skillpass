@@ -6,6 +6,7 @@ import HamburgerMenu from './Hamburger';
 import { uploadProfileImage } from '@/lib/uploadProfilePic';
 import { useDashboard } from '@/hooks/useDashbaord';
 import Image from 'next/image';
+import Link from 'next/link';
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUD_NAME;
 
 const NavbarLogged = () => {
@@ -14,12 +15,12 @@ const NavbarLogged = () => {
   const user = useAppSelector((state) => state.user);
 
   const [avatarUrl, setAvatarUrl] = useState<string>(data?.profilePic ||'/user.jpg');
+useEffect(() => {
+  if (data?.profilePic) {
+    setAvatarUrl(data.profilePic);
+  }
+}, [data?.profilePic]);
 
-  // useEffect(() => {
-  //   if (data?.proflePic) {
-  //     setAvatarUrl(data.proflePic);
-  //   }
-  // }, [data]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,7 +39,7 @@ const NavbarLogged = () => {
       {/* Branding */}
       <div className="ml-8 text-2xl flex gap-4 font-bold text-[#095ef1]">
         {/* <img src="/globe.png" className="h-12 w-12 object-cover  grayscale-100 "  alt="Logo" /> */}
-        <div>SkillPass</div>
+        <Link href="/">SkillPass</Link>
       </div>
 
       {/* Right Side */}

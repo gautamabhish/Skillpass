@@ -13,5 +13,8 @@ export const useQuizTagFetch = (tag: string) => {
     },
     enabled: false, //  Don't auto-run on mount
     staleTime: 1000 * 60 * 5,
+     refetchOnWindowFocus: false, // No refetch on window focus
+    refetchOnReconnect: false,      // No refetch on network reconnect
+    refetchOnMount: false,          // No refetch on remount
   });
 };

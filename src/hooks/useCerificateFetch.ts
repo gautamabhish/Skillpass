@@ -17,5 +17,8 @@ export const useCertificateFetch = (certificateId:string) => {
     },
     enabled: !!certificateId, // prevents running query until certificateId exists
     staleTime: 1000 * 60 * 5, // optional: 5 min cache
+     refetchOnWindowFocus: false, // No refetch on window focus
+    refetchOnReconnect: false,      // No refetch on network reconnect
+    refetchOnMount: false,          // No refetch on remount
   });
 };

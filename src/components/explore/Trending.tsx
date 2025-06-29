@@ -72,7 +72,7 @@ export const Trending: React.FC<TrendingProps> = ({ data, category = 'All Catego
               authorName={quiz.creatorName || 'Unknown'}
               image={
                 quiz.thumbnailURL ||
-                'https://static.vecteezy.com/system/resources/previews/011/066/660/original/quiz-time-button-quiz-time-speech-bubble-quiz-time-text-web-template-illustration-vector.jpg'
+                '/DefaultThumbnail.jpg'
               }
               tag={quiz.tag || ''}
               color={quiz.color || '#2563eb'}

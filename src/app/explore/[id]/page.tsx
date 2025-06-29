@@ -74,6 +74,7 @@ export default  function dataDetailPage(){
   const userId = useAppSelector((state) => state.user.id);
   const currentUserName = useAppSelector((state) => state.user);
   const currentUserEmail = useAppSelector((state) => state.user.email);
+  
   const referralTokenFromUrl = searchParams.get('ref') || '';
 
 useEffect(() => {
@@ -273,7 +274,7 @@ const handleEnroll = async () => {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/create`, {
       userId,
       quizId: data.id,
-      referralToken: referralTokenFromUrl || null,
+      referralToken: referralTokenFromUrl ,
     },{
       withCredentials: true, // Ensure cookies are sent for session
     });
@@ -445,7 +446,7 @@ const handleEnroll = async () => {
                 <Image
                   width = {800}
                   height = {400}
-                  src={data.thumbnailURL}
+                  src={data.thumbnailURL || '/DefaultThumbnail.jpg'}
                   alt={data.title}
                   className="w-full h-80 object-cover"
                 />

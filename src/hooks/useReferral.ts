@@ -12,7 +12,7 @@ export const useReferral = () => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/getreferrals`, {
         withCredentials: true,
       });
-      console.log(res.data);
+      // console.log(res.data);
       return res.data;
     },
     enabled: true, //  Don't auto-run on mount

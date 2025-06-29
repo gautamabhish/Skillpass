@@ -296,6 +296,7 @@ const handleEnroll = async () => {
         ? 'You received a referral , you have to validate it  '
         : `Payment for ${quizTitle} is going to unlock the quiz.`,
       order_id: orderId,
+        image: "/certifi.png",
       handler: async (response: any) => {
         try {
           // 3. Verify payment on backend

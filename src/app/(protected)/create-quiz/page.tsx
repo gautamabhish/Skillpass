@@ -42,26 +42,24 @@ type PaymentSettlement = {
 };
 
 const CreateQuizSection: React.FC = () => {
-  const { data = { quizzes: [], settlements: [] }, isLoading, refetch } = useGetCreations();
-  const { quizzes, settlements } = data;
-
-  const [isRequestingSettlement, setIsRequestingSettlement] = useState(false);
+const { data, isLoading, refetch } = useGetCreations();
+const quizzes = data?.quizzes ?? [];
+const settlements = data?.settlements ?? [];
 
 const mappedSettlementRequests = useMemo(() => {
-   if (!data?.settlements) return [];
-  return settlements.map(s => ({
-    id: s.id,
-    amount: s.amount,
-    status: s.settled ? 'completed' : 'requested',
-    requestedAt: s.settledAt ? new Date(s.settledAt) : undefined,
-    completedAt: s.settled ? new Date(s.settledAt) : undefined
-  }));
-}, [data?.settlements]);
-
+  return settlements.map(s => {
+    const settledDate = s.settledAt ? new Date(s.settledAt) : null;
+    return {
+      id: s.id,
+      amount: s.amount,
+      status: s.settled ? 'completed' : 'requested',
+      requestedAt: settledDate,
+      completedAt: s.settled ? settledDate : null
+    };
+  });
+}, [settlements]);
 
 const totalEarnings = useMemo(() => {
-  if (!quizzes || quizzes.length === 0) return 0;
-
   return quizzes.reduce((sum, quiz) => sum + quiz.earnings, 0);
 }, [quizzes]);
 

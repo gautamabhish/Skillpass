@@ -16,6 +16,6 @@ export const useReferral = () => {
       return res.data;
     },
     enabled: true, //  Don't auto-run on mount
-    staleTime:1000*5*60,
+    staleTime:1000*5*60, 
   });
 };

@@ -8,12 +8,14 @@ export const useReferral = () => {
   return useQuery({
     queryKey: ['/share-and-earn',userId],
     queryFn: async () => {
+
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/getreferrals`, {
         withCredentials: true,
       });
+      console.log(res.data);
       return res.data;
     },
-    enabled: false, //  Don't auto-run on mount
-    staleTime: 1000 * 60 * 5,
+    enabled: true, //  Don't auto-run on mount
+    staleTime:1000*5*60,
   });
 };

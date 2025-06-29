@@ -33,10 +33,13 @@ import {
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { stat } from 'fs';
+import ExploreLoading from '@/app/loading';
 
 export default  function dataDetailPage(){ 
   const router = useRouter();
     const routerParams = useParams();
+     const searchParams = useSearchParams();
+
     const userName  = useAppSelector ((state)=>state.user.name)
   const { data, isLoading } = useFetchQuiz(routerParams.id as string);
 
@@ -51,7 +54,6 @@ export default  function dataDetailPage(){
 
   // Comment / review state:
   const [comment, setComment] = useState('');
-  const [referralToken, setReferralToken] = useState('');
 
   // const [rating, setRating] = useState(5);
   const [rating, setRating] = useState(5); // Default rating
@@ -72,9 +74,7 @@ export default  function dataDetailPage(){
   const userId = useAppSelector((state) => state.user.id);
   const currentUserName = useAppSelector((state) => state.user);
   const currentUserEmail = useAppSelector((state) => state.user.email);
-  const referralTokenFromUrl = typeof window !== 'undefined'
-    ? new URLSearchParams(window.location.search).get('ref')
-    : null;
+  const referralTokenFromUrl = searchParams.get('ref') || '';
 
 useEffect(() => {
   if (typeof window !== 'undefined' && (window as any).Razorpay) {
@@ -238,20 +238,29 @@ const handleCommentSubmit = async () => {
     console.error('Failed to submit comment', error);
   }
 };
-  const handleShare = async () => {
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/data/${data?.id}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: data?.title, url });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+const handleShare = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/referral-link`,
+      {
+        params: { quizId: data.id },   // pass quizId as a query param
+        withCredentials: true
       }
-    } catch (err) {
-      console.error('Share failed', err);
+    );
+
+    const url = res.data.referralLink; // Assuming the backend returns the referral link
+    if (navigator.share) {
+      await navigator.share({ title: data?.title, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-  };
+  } catch (err) {
+    console.error('Share failed', err);
+  }
+};
+
 
 const handleEnroll = async () => {
   if (!data || !isRazorpayReady) {
@@ -290,14 +299,14 @@ const handleEnroll = async () => {
       handler: async (response: any) => {
         try {
           // 3. Verify payment on backend
-          await axios.post('/api/payments/verify', {
+          await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/verify`, {
             userId,
             quizId: data.id,
             razorpayOrderId: response.razorpay_order_id,
             razorpayPaymentId: response.razorpay_payment_id,
             razorpaySignature: response.razorpay_signature,
             referralToken: referralTokenFromUrl || null,
-          });
+          },{withCredentials: true});
 
           alert('✅ Payment successful! Quiz unlocked.');
           // Optionally refresh or redirect
@@ -326,14 +335,7 @@ const handleEnroll = async () => {
 
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading data details...</p>
-        </div>
-      </div>
-    );
+    return <ExploreLoading/>;
   }
 
   if (!data) {
@@ -671,7 +673,7 @@ const handleEnroll = async () => {
     </button>
   </div>
 
-  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+  {/* <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
     {data.price > 0 && (
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 bg-blue-50 border border-blue-200 px-3 sm:px-4 py-2 sm:py-3 rounded-xl shadow-sm">
         <FaGift className="text-blue-600 text-lg sm:text-xl" />
@@ -684,7 +686,7 @@ const handleEnroll = async () => {
         />
       </div>
     )}
-  </div>
+  </div> */}
 
   <div className="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-6">
     <button
@@ -692,7 +694,7 @@ const handleEnroll = async () => {
       className="flex-1 flex items-center justify-center gap-1 sm:gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 sm:py-3 rounded-xl font-medium transition-all"
     >
       <FaShareAlt />
-      <span>Share</span>
+      <span title='This link will be referral link'>Recommend</span>
     </button>
   </div>
 

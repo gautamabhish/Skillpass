@@ -9,10 +9,11 @@ export default function Page() {
   const user = useAppSelector((state) => state.user);
   const router = useRouter();
 
-    if (user && user.id) {
+   useEffect(()=>{ if (user && user.id) 
       router.push("/explore");
-    }
-
+   }
+    
+  ,[user, router]);
 
 
 

@@ -13,7 +13,7 @@ export default function UltraProtectedLayout({
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        alert('Tab switch or app minimize is not allowed during the quiz.');
+        alert('System Recognizes an attempt to cheat.');
         router.push('/unfinished');
       }
     };

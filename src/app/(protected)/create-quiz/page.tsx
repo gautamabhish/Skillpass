@@ -59,11 +59,11 @@ const mappedSettlementRequests = useMemo(() => {
 }, [data?.settlements]);
 
 
+const totalEarnings = useMemo(
+  () => quizzes.reduce((sum, quiz) => sum + quiz.earnings, 0),
+  [data?.quizzes]
+);
 
-  const totalEarnings = useMemo(
-    () => quizzes.reduce((sum, quiz) => sum + quiz.earnings, 0),
-    [quizzes]
-  );
 
 const settledAmount = useMemo(
   () => mappedSettlementRequests

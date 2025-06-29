@@ -48,6 +48,7 @@ const CreateQuizSection: React.FC = () => {
   const [isRequestingSettlement, setIsRequestingSettlement] = useState(false);
 
 const mappedSettlementRequests = useMemo(() => {
+   if (!data?.settlements) return [];
   return settlements.map(s => ({
     id: s.id,
     amount: s.amount,
@@ -55,7 +56,7 @@ const mappedSettlementRequests = useMemo(() => {
     requestedAt: s.settledAt ? new Date(s.settledAt) : undefined,
     completedAt: s.settled ? new Date(s.settledAt) : undefined
   }));
-}, [settlements]);
+}, [data?.settlements]);
 
 
 

@@ -330,8 +330,9 @@ const handleEnroll = async () => {
     // console.log('Razorpay options:', options);
     razorpay.open();
   } catch (err) {
-    console.error('Error during Razorpay payment flow:', err);
-    alert('Failed to initiate payment. Please try again.');
+    console.error('Error during Razorpay payment flow:', err.message);
+    
+    alert('Failed to initiate payment.Maybe You may have already purchased it.');
   }
 };
 

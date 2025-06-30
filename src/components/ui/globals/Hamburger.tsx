@@ -64,7 +64,7 @@ const HamburgerMenu = () => {
               <Link href="/share-and-earn" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
                 Share & Earn
               </Link>
-              <Link href="/about" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
+              <Link href="/support" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
                 Support
               </Link>
               <button
@@ -88,7 +88,7 @@ const HamburgerMenu = () => {
               <Link href="/sign-up" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
                 Sign Up
               </Link>
-              <Link href="/about" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
+              <Link href="/support" className="px-4 py-2 hover:bg-blue-700 hover:text-white">
                 Support
               </Link>
             </>

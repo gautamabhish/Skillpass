@@ -44,8 +44,8 @@ const Footer = () => {
             <h2 className="text-lg font-semibold mb-4">Company</h2>
             <ul>
               <li className="mb-2">
-                <a href="/about" className="text-gray-700 hover:text-[#3277ee] transition">
-                  About
+                <a href="/Support" className="text-gray-700 hover:text-[#3277ee] transition">
+                  Support
                 </a>
               </li>
               {/* <li className="mb-2">

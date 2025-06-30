@@ -14,8 +14,8 @@ const Navbar = () => {
           <Link href="/explore" className="hover:text-slate-700 transition">
             Explore
           </Link>
-          <Link href="/about" className="hover:text-slate-700 transition">
-            About
+          <Link href="/support" className="hover:text-slate-700 transition">
+            Support
           </Link>
         </div>
       </div>

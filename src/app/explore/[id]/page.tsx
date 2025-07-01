@@ -656,7 +656,7 @@ const handleEnroll = async () => {
   <div className="text-center mb-4 sm:mb-6">
     <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-2">
       <span className="text-2xl sm:text-3xl font-bold text-gray-900">
-        {data.currency === 'INR' ? '₹' : '$'}
+        {data.currency?.toLowerCase() === 'inr' ? '₹' : '$'}
         {data.price}
       </span>
       {data.price === 0 && (

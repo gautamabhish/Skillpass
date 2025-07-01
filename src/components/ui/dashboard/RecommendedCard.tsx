@@ -89,7 +89,7 @@ function RecommendCard(props: cardData) {
           <span className="text-xs text-gray-400">• {authorRole}</span>
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{title}</h3>
 
         <p className="text-sm text-gray-500 line-clamp-2">
           {description || 'No description available.'}

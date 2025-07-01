@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono , Inter } from "next/font/google";
 import "./globals.css";
 import { store } from "@/store";
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ReduxProvider } from "@/Providers/ReduxProvider";
 import { QueryProvider } from "@/Providers/QueryProvider";
 // import { AuthProvider } from "@/Providers/AuthProvider";
@@ -74,7 +74,7 @@ export default function RootLayout({
         
        
        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
+  <SpeedInsights />
       </body>
     </html>
   );

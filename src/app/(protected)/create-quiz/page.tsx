@@ -45,6 +45,7 @@ const CreateQuizSection: React.FC = () => {
 const { data, isLoading, refetch } = useGetCreations();
 const quizzes = data?.quizzes ?? [];
 const settlements = data?.settlements ?? [];
+const [isRequestingSettlement, setIsRequestingSettlement] = useState(false);
 
 const mappedSettlementRequests = useMemo(() => {
   return settlements.map(s => {

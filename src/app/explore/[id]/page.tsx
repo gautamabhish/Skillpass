@@ -294,8 +294,8 @@ const handleEnroll = async () => {
       currency,
       name: 'SKILLPASS',
       description: referralApplied
-        ? 'You received a referral , you have to validate it  '
-        : `Payment for ${quizTitle} is going to unlock the quiz.`,
+        ? 'referral applying'
+        : `Note the payment id for any queries.`,
       order_id: orderId,
         image: "/certifi.png",
       handler: async (response: any) => {

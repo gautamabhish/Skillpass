@@ -20,83 +20,69 @@ type Question = {
   attachFileType?: string;
 };
 
-// Updated type to handle both single and multiple selections
-type Answers = Record<number, number | number[]>; // questionIndex → selectedOptionIndex or array of indices
-type MarkedForReview = number[];            // array of question indices
-type AnsweredAndMarked = number[];          // array of question indices
+type Answers = Record<number, number | number[]>;
+type MarkedForReview = number[];
+type AnsweredAndMarked = number[];
 
 export default function JEEStyleQuizInterface({ id }: { id: string }) {
   const { data, isLoading } = useFetchQuizPaid(id);
-  // console.log('Quiz data:', data);
   const userName = useAppSelector((s) => s.user.name);
   const userId = useAppSelector((s) => s.user.id);
   const router = useRouter();
-  
-  // Extract quiz data when available
+
   const questions: Question[] = data?.questions || [];
   const totalQuestions = questions.length;
   const quizTitle = data?.title || 'Quiz';
   const timeLimitInMinutes = data?.timeLimit || 60;
   const quizStartedAtMs = data?.staredAt || Date.now();
-  const disableBackButton = data?.bactrack||false
-  // Local UI state
+  const disableBackButton = data?.bactrack || false;
+
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState<Answers>({});
   const [markedForReview, setMarkedForReview] = useState<MarkedForReview>([]);
   const [answeredAndMarked, setAnsweredAndMarked] = useState<AnsweredAndMarked>([]);
   const [hasTimeExpired, setHasTimeExpired] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  // When timer expires, auto‐submit
   const handleTimeUp = useCallback(() => {
     setHasTimeExpired(true);
-    handleSubmit(); // Attempt submission when time is up
+    handleSubmit();
   }, []);
 
-  // Updated answer selection to handle both single and multi-correct
   const handleAnswer = (optionIndex: number) => {
     const currentQuestionData = questions[currentQuestion - 1];
-    
+
     if (currentQuestionData.type === 'Single Correct') {
-      // Single correct - replace the answer
       setAnswers((prev) => ({ ...prev, [currentQuestion]: optionIndex }));
     } else {
-      // Multi correct - toggle the option
       setAnswers((prev) => {
         const currentAnswer = prev[currentQuestion];
         let newAnswer: number[];
-        
+
         if (Array.isArray(currentAnswer)) {
-          // Already has multiple selections
           if (currentAnswer.includes(optionIndex)) {
-            // Remove the option
-            newAnswer = currentAnswer.filter(idx => idx !== optionIndex);
+            newAnswer = currentAnswer.filter((idx) => idx !== optionIndex);
           } else {
-            // Add the option
             newAnswer = [...currentAnswer, optionIndex].sort();
           }
         } else if (currentAnswer === optionIndex) {
-          // Single selection that matches - remove it
           newAnswer = [];
         } else if (currentAnswer !== undefined) {
-          // Single selection that doesn't match - add both
           newAnswer = [currentAnswer, optionIndex].sort();
         } else {
-          // No previous selection
           newAnswer = [optionIndex];
         }
-        
+
         return { ...prev, [currentQuestion]: newAnswer };
       });
     }
-    
-    // If previously marked for review, move to answeredAndMarked
+
     if (markedForReview.includes(currentQuestion)) {
       setMarkedForReview((prev) => prev.filter((q) => q !== currentQuestion));
       setAnsweredAndMarked((prev) => [...prev, currentQuestion]);
     }
   };
 
-  // Helper function to check if an option is selected
   const isOptionSelected = (optionIndex: number): boolean => {
     const answer = answers[currentQuestion];
     if (Array.isArray(answer)) {
@@ -175,9 +161,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
 
   // Navigation between questions
   const handleNavigation = (questionNum: number) => {
-    if (questionNum >= currentQuestion) {
-      setCurrentQuestion(questionNum);
-    }
+    setCurrentQuestion(questionNum);
   };
 
   const handleSaveAndNext = () => {
@@ -186,11 +170,8 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
     }
   };
 
-  const handleMarkForReview = (andNext: boolean = false) => {
-    if (
-      !markedForReview.includes(currentQuestion) &&
-      !answeredAndMarked.includes(currentQuestion)
-    ) {
+  const handleMarkForReview = (andNext = false) => {
+    if (!markedForReview.includes(currentQuestion) && !answeredAndMarked.includes(currentQuestion)) {
       if (answers[currentQuestion] !== undefined) {
         setAnsweredAndMarked((prev) => [...prev, currentQuestion]);
       } else {
@@ -212,7 +193,75 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
     setAnsweredAndMarked((prev) => prev.filter((q) => q !== currentQuestion));
   };
 
-  // Determine button coloring
+  const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+
+    try {
+      const formattedAnswers = Object.entries(answers).map(([qNumString, selectedOptions]) => {
+        const questionIndex = Number(qNumString) - 1;
+        const question = questions[questionIndex];
+
+        let optionsArray: number[];
+        if (Array.isArray(selectedOptions)) {
+          optionsArray = selectedOptions;
+        } else {
+          optionsArray = [selectedOptions];
+        }
+
+        return {
+          questionId: question.id,
+          selectedOptions: optionsArray,
+        };
+      });
+
+      const payload = {
+        userId: userId!,
+        quizId: id,
+        answers: formattedAnswers,
+        startedAt: quizStartedAtMs,
+        finishedAt: new Date().toISOString(),
+      };
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/submit`,
+        payload,
+        { withCredentials: true }
+      );
+
+      const { userAttempt, quizTitle, peerStats, topAttempts, certificateIssued, certificateId } = res.data;
+
+      localStorage.setItem(
+        'submissionData',
+        JSON.stringify({
+          userAttempt,
+          quizTitle,
+          peerStats,
+          topAttempts,
+          certificateIssued,
+          certificateId,
+        })
+      );
+
+      router.replace(`/submit/${userAttempt.id}`);
+    } catch (err: any) {
+      console.error('Submit error', err.response?.data || err.message);
+      alert('There was an error submitting your answers.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (hasTimeExpired) {
+      alert('Time is up! Your answers are being submitted automatically.');
+    }
+  }, [hasTimeExpired]);
+
+  if (isLoading || submitting) {
+    return <ExploreLoading />;
+  }
+
   const getQuestionStatus = (
     questionNum: number
   ): 'answeredAndMarked' | 'answered' | 'notVisited' | 'markedForReview' | 'current' => {
@@ -239,85 +288,13 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      // Build the "answers" array to handle both single and multi-correct
-      const formattedAnswers = Object.entries(answers).map(
-        ([qNumString, selectedOptions]) => {
-          const questionIndex = Number(qNumString) - 1; // convert "1" → 0
-          const question = questions[questionIndex];
-          
-          // Ensure selectedOptions is always an array
-          let optionsArray: number[];
-          if (Array.isArray(selectedOptions)) {
-            optionsArray = selectedOptions;
-          } else {
-            optionsArray = [selectedOptions];
-          }
-          
-          return {
-            questionId: question.id,
-            selectedOptions: optionsArray,
-          };
-        }
-      );
-
-      // Build the payload
-      const payload = {
-        userId: userId!,
-        quizId: id,
-        answers: formattedAnswers,
-        startedAt: quizStartedAtMs,
-        finishedAt: new Date().toISOString(),
-      };
-
-      // Send it
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/submit`,
-        payload,
-        { withCredentials: true }
-      );
-      const {userAttempt, quizTitle, peerStats, topAttempts, certificateIssued, certificateId} = res.data;
-
-      // Store and redirect
-      localStorage.setItem("submissionData", JSON.stringify({
-        userAttempt,
-        quizTitle,
-        peerStats,
-        topAttempts,
-        certificateIssued,
-        certificateId
-      }));
-      router.push(`/submit/${userAttempt.id}`);
-
-    } catch (err: any) {
-      console.error('Submit error', err.response?.data || err.message);
-      alert('There was an error submitting your answers.');
-    }
-  };
-
-  // Disable interactions if time expired
-  useEffect(() => {
-    if (hasTimeExpired) {
-      alert('Time is up! Your answers are being submitted automatically.');
-    }
-  }, [hasTimeExpired]);
-
-  if (isLoading) {
-    return (
-     <ExploreLoading/>
-    );
-  }
 
   return (
-    <div className="flex flex-col bg-white gap-8">
-      {/* Header */}
+  <div className="flex flex-col bg-white gap-8">
       <div className="flex justify-between items-center border-b-2 border-gray-200 py-2 px-4">
-        <div className="flex items-center">
-          <div className="font-bold text-blue-800 text-2xl flex items-center gap-2">
-            <Image src="/Certifi.png" height={32} width={32} alt="CERTI" />
-            {quizTitle}
-          </div>
+        <div className="font-bold text-blue-800 text-2xl flex items-center gap-2">
+          <Image src="/certifi.png" height={32} width={32} alt="CERTI" />
+          {quizTitle}
         </div>
 
         <div className="flex items-center border border-gray-300 rounded p-2 gap-4">
@@ -344,7 +321,6 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
           </div>
         </div>
       </div>
-
       {/* Main Content */}
       <div className="flex pt-8">
         {/* Question Area */}

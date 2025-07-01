@@ -14,7 +14,7 @@ export default function UltraProtectedLayout({
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         alert('System Recognizes an attempt to cheat.');
-        router.push('/unfinished');
+        router.replace('/unfinished');
       }
     };
 

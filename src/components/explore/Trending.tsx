@@ -13,6 +13,7 @@ export type Quiz = {
   description?: string;
   price?: number;
   duration?: number;
+  verified?: boolean;
   color?: string;
   creatorProfilePic?: string;
 };
@@ -70,6 +71,7 @@ export const Trending: React.FC<TrendingProps> = ({ data, category = 'All Catego
             <RecommendCard
               id={quiz.id}
               authorName={quiz.creatorName || 'Unknown'}
+              verified={quiz?.verified || false}
               image={
                 quiz.thumbnailURL ||
                 '/DefaultThumbnail.jpg'

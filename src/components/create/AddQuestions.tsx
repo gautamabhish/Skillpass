@@ -210,6 +210,7 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
               onChange={(data) => handleInputChange(index, data)}
               options={q.options ?? []}
               correctAnswers={q.correctAnswers ?? []}
+              Uniquename={q.id}
             />
           </div>
         ))}

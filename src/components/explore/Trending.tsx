@@ -80,7 +80,7 @@ export const Trending: React.FC<TrendingProps> = ({ data, category = 'All Catego
               authorAvatar={quiz.creatorProfilePic}
               description={quiz.description || 'No description available'}
               price={quiz.price ?? 0}
-              time={quiz.duration || 5}
+              time={quiz.duration || 60}
             />
           </div>
         );

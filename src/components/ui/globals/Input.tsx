@@ -21,6 +21,7 @@ interface InputProps {
   helperText?: string;
   options?: string[];             // Add this line
   correctAnswers?: number[];      // Add this line
+  Uniquename?: string; // Add this line
 }
 
 
@@ -38,6 +39,7 @@ const Input: React.FC<InputProps> = ({
   className = "",
   error,
   helperText,
+  Uniquename,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -139,7 +141,7 @@ const Input: React.FC<InputProps> = ({
     {type === QuestionType.SingleCorrect ? (
       <input
         type="radio"
-        name="correct"
+        name={Uniquename || `default-${index}`}
         checked={correctAnswers[0] === index}
         onChange={() => handleMarkCorrect(index)}
       />

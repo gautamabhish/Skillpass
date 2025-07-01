@@ -100,7 +100,7 @@ function RecommendCard(props: cardData) {
         <div className="flex items-center justify-between pt-2 text-sm text-gray-400">
           <span className="flex items-center gap-1">
             <FaRegClock />
-            {time ? `${time} mins` : 'N/A'}
+            {time ? `${time} mins` : '60 mins'}
           </span>
           <div className="flex items-center gap-3">
             {price > 0 ? (

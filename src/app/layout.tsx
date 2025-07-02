@@ -64,7 +64,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      ><link rel="icon" href="/globe.ico" sizes="any" />
+
      <QueryProvider>
 
       <ReduxProvider>

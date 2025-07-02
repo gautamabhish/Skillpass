@@ -59,7 +59,7 @@ const handleSearchSubmit = async () => {
 // Category + searchResults filter logic
 useEffect(() => {
   const base = searchResults !== null ? searchResults : allQuizzes;
-  console.log('Base quizzes:', base);
+  // console.log('Base quizzes:', base);
   if (selectedCategory === 'All Categories') {
     setFiltered(base);
   } else {
@@ -68,7 +68,7 @@ useEffect(() => {
         tag.toLowerCase().includes(selectedCategory.toLowerCase())
       )
     );
-    console.log('Filtered results:', result);
+    // console.log('Filtered results:', result);
     setFiltered(result);
   }
 }, [selectedCategory, searchResults, allQuizzes]);

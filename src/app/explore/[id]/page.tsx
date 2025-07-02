@@ -807,6 +807,10 @@ const handleEnroll = async () => {
           </div>
         </div>
       )}
+     <div className="text-sm text-gray-600 text-center my-1">
+  Disclaimer: This platform is independent and not affiliated with any official technologies. Content is for practice and educational use only.
+</div>
+
     </div>
   );
 }

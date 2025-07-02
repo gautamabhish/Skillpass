@@ -28,14 +28,10 @@ export const Trending: React.FC<TrendingProps> = ({ data, category = 'All Catego
   const [disabledId, setDisabledId] = useState<string | null>(null);
   const router = useRouter();
 
-  const filteredByCategory =
-    category !== 'All Categories'
-      ? data.filter((q) => q.tag === category)
-      : data;
 
   const toShow = typeof limit === 'number'
-    ? filteredByCategory.slice(0, limit)
-    : filteredByCategory;
+    ? data.slice(0, limit)
+    : data;
 
   if (!toShow.length) {
     return (

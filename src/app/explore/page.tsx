@@ -17,7 +17,7 @@ import { useAppSelector } from '@/store/hooks';
 type Quiz = {
   id: string;
   title: string;
-  tag: string;
+  quizTags: Array<string>;
   creatorName: string;
   image?: string;
   description?: string;
@@ -31,48 +31,58 @@ type Quiz = {
 const categories = ['All Categories', 'Programming', 'Design', 'Business', 'Marketing'];
 
 const ExplorePage: React.FC = () => {
- const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
 const [searchTerm, setSearchTerm] = useState<string>('');
+const [searchResults, setSearchResults] = useState<Quiz[] | null>(null);
 const [filtered, setFiltered] = useState<Quiz[]>([]);
 const [showAll, setShowAll] = useState<boolean>(false);
 
-const { data: searchedQuizzes, refetch: refetchSearch, isFetching } = useQuizTagFetch(searchTerm);
-
-// 🔁 All quizzes initially
+const { data: searchedQuizzes, refetch: refetchSearch } = useQuizTagFetch(searchTerm);
 const { data, isLoading, isError } = useExplore();
- const allQuizzes = useMemo(() => data?.courses || [], [data?.courses]);
- const userId = useAppSelector((state) => state.user?.id);
-//  console.log('All Quizzes:', userId);
+const allQuizzes = useMemo(() => data?.courses || [], [data?.courses]);
+
+// When allQuizzes loads initially, set filtered
 useEffect(() => {
   setFiltered(allQuizzes);
 }, [allQuizzes]);
 
-//  Search submit triggers query and updates UI
+// On search submit
 const handleSearchSubmit = async () => {
   try {
     const { data } = await refetchSearch();
-    setFiltered(data || []);
-    setSelectedCategory('All Categories');
+    setSearchResults(data || []);
   } catch (err) {
     console.error('Search failed:', err);
   }
 };
 
-///tegory filter only (no searchTerm filtering here)
- useEffect(() => {
-    if (selectedCategory === 'All Categories') {
-      // console.log(allQuizzes)
-      setFiltered(allQuizzes);
-    } else {
-     const result = allQuizzes.filter(q =>
-  q?.quizTags?.find(tag => tag.toLowerCase().includes( selectedCategory.toLowerCase()))
-);
+// Category + searchResults filter logic
+useEffect(() => {
+  const base = searchResults !== null ? searchResults : allQuizzes;
+  console.log('Base quizzes:', base);
+  if (selectedCategory === 'All Categories') {
+    setFiltered(base);
+  } else {
+    const result = base.filter(q =>
+      q.quizTags?.some(tag =>
+        tag.toLowerCase().includes(selectedCategory.toLowerCase())
+      )
+    );
+    console.log('Filtered results:', result);
+    setFiltered(result);
+  }
+}, [selectedCategory, searchResults, allQuizzes]);
 
-      setFiltered(result);
-    }
-  }, [selectedCategory, allQuizzes]); 
 
-// 🖋 Handle typing in input
+const handleReset = () => {
+  setSearchTerm('');
+  setSelectedCategory('All Categories');
+  setSearchResults(null);
+  setFiltered(allQuizzes);
+};
+
+
+// Handle input change
 const handleSearchChange = (val: string) => setSearchTerm(val);
 
   return (
@@ -105,7 +115,15 @@ const handleSearchChange = (val: string) => setSearchTerm(val);
             >
               {cat}
             </button>
+
+            
           ))}
+           <button
+    onClick={handleReset}
+    className="px-4 py-2 rounded-full text-sm  font-medium border border-gray-300 bg-gray-100 hover:bg-red-500 text-gray-700"
+  >
+    Reset Explore
+  </button>
         </div>
 
         {/* Section Title + Show All Toggle */}
@@ -122,7 +140,6 @@ const handleSearchChange = (val: string) => setSearchTerm(val);
         {/* Loading / Error */}
         {isLoading && <p>Loading quizzes…</p>}
         {isError && <p className="text-red-500">Failed to load quizzes.</p>}
-
         {/* Quiz Grid via Trending */}
         {!isLoading && !isError && (
           <Trending

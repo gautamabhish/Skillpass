@@ -285,6 +285,7 @@ const handleEnroll = async () => {
     if(orderId ===process.env.NEXT_PUBLIC_FREE_QUIZ_ORDER_ID){
       alert('This quiz is free to access. You can start it now without payment.Check the quizzes owned by you.');
       // router.push(`/session/${data.id}`);
+      router.push("/dashboard");
          return ;
     }
  
@@ -332,7 +333,8 @@ const handleEnroll = async () => {
   } catch (err) {
     console.error('Error during Razorpay payment flow:', err.message);
     
-    alert('Failed to initiate payment.Maybe You may have already purchased it.');
+    alert('Failed to initiate payment.Maybe You may have already purchased it.Redirecting...');
+router.push("/dashboard");
   }
 };
 

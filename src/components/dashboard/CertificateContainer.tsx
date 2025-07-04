@@ -15,8 +15,9 @@ function CertificatesContainer() {
       <h1 className="text-2xl font-bold flex items-center gap-2">
         Your Certificates
       </h1>
+    
+    <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 space-center">
 
-     <div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
 
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
@@ -60,6 +61,7 @@ function CertificatesContainer() {
             </Link>
           </div>
         )}
+      
       </div>
     </section>
   );

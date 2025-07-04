@@ -7,6 +7,13 @@ import { useCourseCreate } from "@/Providers/CreateProvider";
 import { v4 as uuidv4 } from 'uuid';
 import { Question } from "@/Providers/CreateProvider";
 
+const MAX_WORDS = 150;
+const limitChars = (text: string, maxChars: number) =>
+  text.slice(0, maxChars);
+
+// Helper: count chars
+const countChars = (text: string) => text.length;
+
 const AddQuestions: React.FC = () => {
   const { courseData, setCourseData } = useCourseCreate();
 
@@ -15,7 +22,7 @@ const AddQuestions: React.FC = () => {
       id: uuidv4(),
       type: QuestionType.MultiCorrect,
       text: '',
-      points: 1, // string to allow flexible typing
+      points: 1,
       negPoints: 0,
       options: ["", ""],
       correctAnswers: [],
@@ -31,22 +38,26 @@ const AddQuestions: React.FC = () => {
     }));
   };
 
-const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
-  setCourseData(prev => {
-    const updated = [...(prev.Questions ?? [])];
-    const question = { ...updated[index] };
+  const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
+    setCourseData(prev => {
+      const updated = [...(prev.Questions ?? [])];
+      const question = { ...updated[index] };
 
-    if (field === "points" || field === "negPoints") {
-      const parsed = parseFloat(value);
-      question[field] = isNaN(parsed) ? 0 : parsed; // fallback to 0 or keep previous if needed
-    } else {
-      question[field] = value;
-    }
+      if (field === "text" && typeof value === 'string') {
+        value = limitChars(value, MAX_WORDS);
+      }
 
-    updated[index] = question;
-    return { ...prev, Questions: updated };
-  });
-};
+      if (field === "points" || field === "negPoints") {
+        const parsed = parseFloat(value);
+        question[field] = isNaN(parsed) ? 0 : parsed;
+      } else {
+        question[field] = value;
+      }
+
+      updated[index] = question;
+      return { ...prev, Questions: updated };
+    });
+  };
 
   const handleDeleteQuestion = (id: string) => {
     setCourseData(prev => ({
@@ -82,15 +93,6 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
         return { ...prev, Questions: updated };
       });
     }
-  };
-
-  const validateQuestion = (q: Question): string | null => {
-    if (!q.text?.trim()) return "Question text is required.";
-    if (q.points < 1) return "Points must be at least 1.";
-    if (q.negPoints   < 0) return "Negative points must be 0 or less.";
-    if (!Array.isArray(q.options) || q.options.length < 2) return "At least 2 options are required.";
-    if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length === 0) return "At least one correct answer is required.";
-    return null;
   };
 
   return (
@@ -133,6 +135,11 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
               </label>
             </div>
 
+            {/* Word limit display */}
+            <p className="text-xs text-gray-500 mb-2">
+              {MAX_WORDS - countChars(q.text || '')} words left
+            </p>
+
             {q.AttachpreviewURL && (
               <div className="mt-2">
                 {q.attachFileType?.includes('audio') ? (
@@ -169,40 +176,38 @@ const handleQuestionChange = (index: number, field: keyof Question, value: any) 
                   )
                 )}
               </select>
-<input
-  type="text"
-  inputMode="numeric"
-  pattern="^[1-9][0-9]*$"
-  placeholder="Points"
-  className="w-24 px-2 py-1 border border-[#239102] rounded text-sm"
-  value={q.points === 0 ? '' : q.points}
-  onChange={(e) => {
-    const val = e.target.value;
-    // Allow empty string (for erasing) or valid positive integers only (no leading zeros)
-    if (val === '' || /^[1-9][0-9]*$/.test(val)) {
-      handleQuestionChange(index, 'points', val);
-    }
-  }}
-  title={`Assigned Points: ${q.points}`}
-/>
 
-<input
-  type="text"
-  inputMode="numeric"
-  pattern="^[1-9][0-9]*$"
-  placeholder="Points"
-  className="w-24 px-2 py-1 border border-[#c41f1f] rounded text-sm text-red-500"
-  value={q.negPoints === 0 ? '' : q.negPoints}
-  onChange={(e) => {
-    const val = e.target.value;
-    // Allow empty string (for erasing) or valid positive integers only (no leading zeros)
-    if (val === '' || /^[1-9][0-9]*$/.test(val)) {
-      handleQuestionChange(index, 'negPoints', val);
-    }
-  }}
-  title={`Assigned Points: ${q.negPoints}`}
-/>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="^[1-9][0-9]*$"
+                placeholder="Points"
+                className="w-24 px-2 py-1 border border-[#239102] rounded text-sm"
+                value={q.points === 0 ? '' : q.points}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || /^[1-9][0-9]*$/.test(val)) {
+                    handleQuestionChange(index, 'points', val);
+                  }
+                }}
+                title={`Assigned Points: ${q.points}`}
+              />
 
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="^[1-9][0-9]*$"
+                placeholder="Neg Points"
+                className="w-24 px-2 py-1 border border-[#c41f1f] rounded text-sm text-red-500"
+                value={q.negPoints === 0 ? '' : q.negPoints}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || /^[1-9][0-9]*$/.test(val)) {
+                    handleQuestionChange(index, 'negPoints', val);
+                  }
+                }}
+                title={`Assigned Neg Points: ${q.negPoints}`}
+              />
             </div>
 
             <Input

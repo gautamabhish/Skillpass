@@ -7,23 +7,33 @@ import { useCourseCreate } from '@/Providers/CreateProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
+const MAX_WORDS = 150;
+
+// Helper: limit by chars
+const limitChars = (text: string, maxChars: number) =>
+  text.slice(0, maxChars);
+
+// Helper: count chars
+const countChars = (text: string) => text.length;
+
+
 const CreateQuizBasicDetails = () => {
-  // Using local state for the tag input field:
   const [tagInput, setTagInput] = useState('');
   const { courseData, setCourseData } = useCourseCreate();
 
-  // Handler to update any field in the provider state:
   const handleInputChange = <K extends keyof CourseData>(
     field: K,
     value: CourseData[K]
   ) => {
+    if (typeof value === 'string') {
+      value = limitChars(value, MAX_WORDS) as CourseData[K];
+    }
     setCourseData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  // Add a new tag if it's not already present:
   const handleAddTag = () => {
     const newTag = tagInput.trim();
     if (newTag && (!courseData.Tags || !courseData.Tags.includes(newTag))) {
@@ -35,7 +45,6 @@ const CreateQuizBasicDetails = () => {
     }
   };
 
-  // Remove a tag from the shared state:
   const handleRemoveTag = (tagToRemove: string) => {
     setCourseData((prev) => ({
       ...prev,
@@ -43,11 +52,10 @@ const CreateQuizBasicDetails = () => {
     }));
   };
 
-  // Handle file change (image input):
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      courseData.thumbFile = file; // Store the file temporarily
+      courseData.thumbFile = file;
       const fileUrl = URL.createObjectURL(file);
       setCourseData((prev) => ({
         ...prev,
@@ -56,7 +64,6 @@ const CreateQuizBasicDetails = () => {
     }
   };
 
-  // Handle file drop:
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files?.[0];
@@ -75,36 +82,41 @@ const CreateQuizBasicDetails = () => {
         Basic Quiz Details
       </div>
 
-     <PriceInput courseData={courseData} handleInputChange={handleInputChange}></PriceInput>
-       <div> 
+      <PriceInput courseData={courseData} handleInputChange={handleInputChange} />
+
+      <div>
         <p className="font-medium text-gray-700">Course URL</p>
         <input
           type="text"
           value={courseData.courseURL || ''}
           onChange={(e) => handleInputChange('courseURL', e.target.value)}
           placeholder="Enter the course URL"
-          title="You quiz is associated with any course."
+          title="Your quiz is linked to a course."
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
+        <p className="text-sm text-gray-500">
+          {MAX_WORDS - countChars(courseData.courseURL || '')} words left
+        </p>
       </div>
 
-      {/* Course Thumbnail Input */}
       <div>
         <p className="font-medium text-gray-700">Course Thumbnail (if any)</p>
         <div
-          className="w-full h-52 border-2 border-dashed rounded-lg border-gray-300 flex justify-center items-center hover:border-blue-500 focus-within:border-blue-500 transition-all ease-in-out"
+          className="w-full h-52 border-2 border-dashed rounded-lg border-gray-300 flex justify-center items-center hover:border-blue-500"
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
           style={{ position: 'relative' }}
         >
-          {(courseData.thumbURL) ? (
+          {courseData.thumbURL ? (
             <img
               src={courseData.thumbURL}
               alt="Thumbnail Preview"
               className="w-full h-full object-fit rounded-lg"
             />
           ) : (
-            <p className="text-gray-500 text-center">Drag & drop an image or click to select</p>
+            <p className="text-gray-500 text-center">
+              Drag & drop an image or click to select
+            </p>
           )}
           <input
             type="file"
@@ -115,9 +127,10 @@ const CreateQuizBasicDetails = () => {
         </div>
       </div>
 
-      {/* Quiz Title Input */}
       <div>
-        <label className="font-medium text-gray-700">Quiz Title <span className="text-red-500">*</span></label>
+        <label className="font-medium text-gray-700">
+          Quiz Title <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           value={courseData.title || ''}
@@ -126,25 +139,28 @@ const CreateQuizBasicDetails = () => {
           placeholder="Enter the quiz title"
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
+        <p className="text-sm text-gray-500">
+          {MAX_WORDS - countChars(courseData.title || '')} words left
+        </p>
       </div>
 
-      {/* Description Input */}
       <div>
         <p className="font-medium text-gray-700">Description</p>
         <textarea
           rows={4}
-          title="Description of the quiz To gather more audience."
           value={courseData.description || ''}
           onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Enter a description for your quiz"
           className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
         />
+        <p className="text-sm text-gray-500">
+          {MAX_WORDS - countChars(courseData.description || '')} words left
+        </p>
       </div>
 
-      {/* Tags Section */}
       <div>
         <p className="font-medium text-gray-700">Tags</p>
-        <div className="flex flex-wrap gap-2 md:max-w-96 lg:min-w-2xl lg:max-w-3xl whitespace-normal break-words">
+        <div className="flex flex-wrap gap-2">
           {courseData.Tags?.map((tag, idx) => (
             <div
               key={idx}
@@ -167,22 +183,23 @@ const CreateQuizBasicDetails = () => {
                 e.preventDefault();
                 handleAddTag();
               }
-            }
-            }
+            }}
             type="text"
             value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
+            onChange={(e) => setTagInput(limitChars(e.target.value, MAX_WORDS))}
             placeholder="Add tag"
             className="border border-gray-300 px-3 py-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           <button
-          
             onClick={handleAddTag}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Add
           </button>
         </div>
+        <p className="text-sm text-gray-500">
+          {MAX_WORDS - countChars(tagInput)} words left
+        </p>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import React from 'react';
 import { Cedarville_Cursive } from 'next/font/google';
 import clsx from 'clsx';
 import { useCertificateFetch } from '@/hooks/useCerificateFetch';
+import ExploreLoading from '@/app/loading';
 
 const Cedarvile = Cedarville_Cursive({
   subsets: ['latin'],
@@ -23,7 +24,7 @@ const Certificate = ({ certificateId }: CertificateProps) => {
   };
     const certificateData = data?.certificateDetails;
   if (isLoading || !certificateData) {
-    return <div className="text-center py-10">Loading certificate...</div>;
+    return <ExploreLoading/>;
   }
 
   const issueDate = new Date(certificateData.issuedAt).toLocaleDateString('en-US', {
@@ -36,7 +37,7 @@ const Certificate = ({ certificateId }: CertificateProps) => {
     <div className="max-w-4xl mx-auto p-6 bg-gray-50">
       <div
         id="print-area"
-        className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-8 border-8 border-double border-blue-800 rounded-lg shadow-2xl"
+        className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-8 border-4  border-[#d4a574] rounded-lg shadow-2xl"
       >
         {/* Decorative corners */}
         <div className="absolute top-4 left-4 w-8 h-8 border-l-4 border-t-4 border-yellow-500"></div>
@@ -87,10 +88,10 @@ const Certificate = ({ certificateId }: CertificateProps) => {
         <div className="flex justify-between items-end mt-12">
           {/* Left - Info */}
           <div className="text-left">
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <p className="text-sm text-gray-600 mb-1">Certificate ID:</p>
               <p className="font-mono text-sm font-bold text-blue-800">{certificateData.id}</p>
-            </div>
+            </div> */}
             <div>
               <p className="text-sm text-gray-600 mb-1">Date Issued:</p>
               <p className="text-sm font-semibold text-gray-800">{issueDate}</p>

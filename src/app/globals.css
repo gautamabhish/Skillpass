@@ -28,10 +28,11 @@ button{
   #print-area, #print-area * {
     visibility: visible;
   }
+ 
 
   #print-area {
     position: absolute;
-    top: 0;
+    top: 10%;
     left: 0;
     width: 100%;
   }

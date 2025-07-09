@@ -512,8 +512,8 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
               return (
                 <button
                   key={idx}
-                  onClick={() => !isDisabled && handleNavigation(questionNum)}
-                  disabled={isDisabled || hasTimeExpired}
+                  onClick={() => !disableBackButton && handleNavigation(questionNum)}
+                  disabled={ disableBackButton || hasTimeExpired}
                   className={clsx(
                     'w-10 h-10 rounded-md text-white',
                     getStatusColor(getQuestionStatus(questionNum)),

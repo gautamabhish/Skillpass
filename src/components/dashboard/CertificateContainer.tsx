@@ -11,12 +11,13 @@ function CertificatesContainer() {
   const certificates = data?.certificates || [];
 
   return (
-    <section className="flex flex-col gap-4 mt-4 px-4 sm:px-6 md:px-20 py-6">
+      <section className="flex flex-col gap-4 mt-4 px-4 sm:px-6 md:px-20 py-6">
+
       <h1 className="text-2xl font-bold flex items-center gap-2">
         Your Certificates
       </h1>
     
-    <div className="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 space-center">
+<div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(350px,1fr))]">
 
 
         {isLoading ? (
@@ -38,7 +39,7 @@ function CertificatesContainer() {
           ))
         ) : certificates.length > 0 ? (
           certificates.map((cert: any, idx: number) => (
-            <div key={idx} className="w-full max-w-sm">
+            <div key={ idx} className="w-full max-w-[300px] p-2 ">
               <CertificateCard
                 image="/certificateDefault.png"
                 title={cert.userName}

@@ -442,7 +442,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
           <div className="flex justify-between items-center mt-12">
             <button
               className="bg-gray-300 text-gray-700 px-4 py-2 text-xs font-semibold cursor-not-allowed"
-              disabled={!disableBackButton  }
+              disabled={disableBackButton  }
               onClick={() =>
                 currentQuestion >1 &&
                 setCurrentQuestion(()=>currentQuestion -1)}
@@ -512,8 +512,8 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
               return (
                 <button
                   key={idx}
-                  onClick={() => !disableBackButton && handleNavigation(questionNum)}
-                  disabled={ disableBackButton || hasTimeExpired}
+                  onClick={() => disableBackButton && handleNavigation(questionNum)}
+                  disabled={!disableBackButton || hasTimeExpired}
                   className={clsx(
                     'w-10 h-10 rounded-md text-white',
                     getStatusColor(getQuestionStatus(questionNum)),

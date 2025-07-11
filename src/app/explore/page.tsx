@@ -13,6 +13,7 @@ import { Trending } from '@/components/explore/Trending';
 import { useExplore } from '@/hooks/useExplore';
 import { useQuizTagFetch } from '@/hooks/useQuizTagFetch';
 import { useAppSelector } from '@/store/hooks';
+import { all } from 'axios';
 
 type Quiz = {
   id: string;
@@ -32,12 +33,14 @@ const categories = ['All Categories', 'Programming', 'Design', 'Business', 'Mark
 
 const ExplorePage: React.FC = () => {
 const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
-const [searchTerm, setSearchTerm] = useState<string>('');
+const [searchKey, setSearchKey] = useState<'title' | 'creator' | 'tag'>('title');
+const [searchValue, setSearchValue] = useState<string>('');
+
 const [searchResults, setSearchResults] = useState<Quiz[] | null>(null);
 const [filtered, setFiltered] = useState<Quiz[]>([]);
 const [showAll, setShowAll] = useState<boolean>(false);
 
-const { data: searchedQuizzes, refetch: refetchSearch } = useQuizTagFetch(searchTerm);
+const { data: searchedQuizzes, refetch: refetchSearch } = useQuizTagFetch(searchKey, searchValue);
 const { data, isLoading, isError } = useExplore();
 const allQuizzes = useMemo(() => data?.courses || [], [data?.courses]);
 
@@ -46,15 +49,6 @@ useEffect(() => {
   setFiltered(allQuizzes);
 }, [allQuizzes]);
 
-// On search submit
-const handleSearchSubmit = async () => {
-  try {
-    const { data } = await refetchSearch();
-    setSearchResults(data || []);
-  } catch (err) {
-    console.error('Search failed:', err);
-  }
-};
 
 // Category + searchResults filter logic
 useEffect(() => {
@@ -83,7 +77,25 @@ const handleReset = () => {
 
 
 // Handle input change
-const handleSearchChange = (val: string) => setSearchTerm(val);
+const handleSearchChange = (key: string, value: string) => {
+  setSearchKey(key as any);
+  setSearchValue(value);
+};
+
+const handleSearchSubmit = async (key: string, value: string) => {
+  setSearchKey(key as any);
+  setSearchValue(value);
+  if (!value.trim()) {
+    setSearchResults(allQuizzes);
+    return;
+  }
+  try {
+    const { data } = await refetchSearch();
+    setSearchResults(data || []);
+  } catch (err) {
+    console.error('Search failed:', err);
+  }
+};
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f5f5f5] p-4 gap-y-8">

@@ -1,20 +1,25 @@
-// hooks/useQuizTitleFetch.ts
+// hooks/useQuizTagFetch.ts
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const useQuizTagFetch = (tag: string) => {
+export const useQuizTagFetch = (key: string, value: string) => {
   return useQuery({
-    queryKey: ['quiz/tag', tag],
+    queryKey: ['quiz', key, value], // Helps with caching
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/find-by-tag/${tag}`, {
-        withCredentials: true,
-      });
+      if(key==='creator') key = 'creatorName'; // Adjust key for creator search
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/find-by`,
+        {
+          params: { key, value },
+          withCredentials: true,
+        }
+      );
       return res.data;
     },
-    enabled: false, //  Don't auto-run on mount
+    enabled: false, // controlled fetch
     staleTime: 1000 * 60 * 5,
-     refetchOnWindowFocus: false, // No refetch on window focus
-    refetchOnReconnect: false,      // No refetch on network reconnect
-    refetchOnMount: false,          // No refetch on remount
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 };

@@ -8,7 +8,7 @@ import { Rocket, DollarSign, Clock, CheckCircle, AlertCircle, Send } from 'lucid
 import Image from 'next/image';
 import NavbarLogged from '@/components/ui/globals/NavbarLogged';
 import { useGetCreations } from '@/hooks/useGetCreations';
-
+import ForbiddenPage from '@/components/ui/globals/Forbidden';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,6 +19,7 @@ import {
   Legend
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import ExploreLoading from '@/app/loading';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -42,7 +43,8 @@ type PaymentSettlement = {
 };
 
 const CreateQuizSection: React.FC = () => {
-const { data, isLoading, refetch } = useGetCreations();
+const { data, isLoading, refetch , error } = useGetCreations();
+const Forbidden = error?.response?.status === 403;
 const quizzes = data?.quizzes ?? [];
 const settlements = data?.settlements ?? [];
 const [isRequestingSettlement, setIsRequestingSettlement] = useState(false);
@@ -154,6 +156,15 @@ const settledAmount = useMemo(
       default: return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
+  if(isLoading) {
+    return (<ExploreLoading/>);
+  }
+  if (Forbidden) {
+  return (
+    <ForbiddenPage />
+  );
+}
+
 
   return (
   <>

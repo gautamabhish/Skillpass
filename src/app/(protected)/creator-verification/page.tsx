@@ -2,13 +2,24 @@
 'use client'
 import React, { useState } from 'react';
 import { Camera, Plus, X, User, Phone, Award, FileText, MessageCircle, Instagram, Linkedin, Globe, Upload } from 'lucide-react';
-
+import { useDashboard } from '@/hooks/useDashbaord';
+import ExploreLoading from '@/app/loading';
+import { useRef } from 'react';
+import Image from 'next/image';
+import NavbarLogged from '@/components/ui/globals/NavbarLogged';
 const MAX_WORDS_EXPERTISE = 10;
 const MAX_WORDS_BIO = 70;
 const MAX_BULLETS_EXPERIENCE = 5;
 const MAX_WORDS_PER_BULLET = 15;
 
 const CreatorVerification = () => {
+    const {data, loading } = useDashboard();
+    if(loading){
+        return(<ExploreLoading/>)
+    }
+    const imageRef = useRef<HTMLInputElement>(null);
+    const imageUrl:string = data?.profilePic || '/user.jpg';
+    const [profilePic , setProfilePic] = useState<File | null>(imageUrl);
     const [form, setForm] = useState({
         profilePicture: null,
         profilePicturePreview: '',
@@ -71,6 +82,7 @@ const CreatorVerification = () => {
                 setForm(prevForm => ({ ...prevForm, profilePicture: null, profilePicturePreview: '' }));
                 return;
             }
+        setProfilePic(file);
 
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -175,8 +187,11 @@ const CreatorVerification = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 px-4">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 px-12">
+               {/* <div className='pb-4 px-4'>
+                 <NavbarLogged></NavbarLogged>
+               </div> */}
+            <div className="max-w-6xl mx-auto text-center">
                 <header className="mb-8 text-center">
                     <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
                         Creator Profile Setup
@@ -186,7 +201,7 @@ const CreatorVerification = () => {
                     </p>
                 </header>
 
-                <main className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <main className="grid max-w-2xl grid-cols-1 mx-auto  gap-10">
                     {/* Left: Form Sections */}
                     <section className="lg:col-span-2 space-y-8">
                         {/* Basic Info Section */}
@@ -202,34 +217,28 @@ const CreatorVerification = () => {
                                     Profile Picture *
                                 </label>
                                 <div className="flex items-center space-x-6">
-                                    <div className="relative">
+                                    <div className="relative hover:cursor-pointer" onClick={() => imageRef.current?.click()}>
                                         {form.profilePicturePreview ? (
-                                            <img
+                                            <Image height={100} width={100}
                                                 src={form.profilePicturePreview}
                                                 alt="Profile Preview"
-                                                className="w-24 h-24 object-cover rounded-full border-4 border-blue-200"
+                                                className="w-24 h-24 object-cover rounded-full border-4 border-blue-200 "
                                             />
                                         ) : (
                                             <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-gray-300">
-                                                <Camera className="w-8 h-8 text-gray-400" />
+                                                <Image width={100} height={100} src={imageUrl} alt='avatar' className='object-cover' ></Image>
                                             </div>
                                         )}
                                         <input
                                             type="file"
                                             accept="image/*"
                                             onChange={handleImageChange}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            ref={imageRef}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer hidden "
                                         />
                                     </div>
                                     <div>
-                                        <button
-                                            type="button"
-                                            onClick={() => document.querySelector('input[type="file"]').click()}
-                                            className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-                                        >
-                                            <Upload className="w-4 h-4 mr-2" />
-                                            Choose Image
-                                        </button>
+                                      
                                         <p className="text-xs text-gray-500 mt-1">Max 2MB, JPG/PNG</p>
                                     </div>
                                 </div>
@@ -449,88 +458,6 @@ const CreatorVerification = () => {
                             </button>
                         </div>
                     </section>
-
-                    {/* Right: Preview */}
-                    <aside className="hidden lg:block">
-                        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 sticky top-6">
-                            <h3 className="text-xl font-bold mb-6 text-gray-800 text-center">Live Preview</h3>
-                            
-                            {/* Profile Picture Preview */}
-                            <div className="text-center mb-4">
-                                {form.profilePicturePreview ? (
-                                    <img
-                                        src={form.profilePicturePreview}
-                                        alt="Profile Preview"
-                                        className="w-32 h-32 object-cover rounded-full border-4 border-blue-200 mx-auto mb-4"
-                                    />
-                                ) : (
-                                    <div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
-                                        <Camera className="w-8 h-8 text-gray-400" />
-                                    </div>
-                                )}
-                                
-                                {form.expertise && (
-                                    <h4 className="text-lg font-semibold text-blue-800 mb-2">{form.expertise}</h4>
-                                )}
-                                
-                                {form.phoneNumber && (
-                                    <p className="text-sm text-gray-600 mb-3">{form.phoneNumber}</p>
-                                )}
-                                
-                                {form.bio && (
-                                    <p className="text-sm text-gray-700 leading-relaxed mb-4">{form.bio}</p>
-                                )}
-                            </div>
-
-                            {/* Experience Preview */}
-                            {form.experiencePoints.filter(Boolean).length > 0 && (
-                                <div className="mb-4">
-                                    <h5 className="font-semibold text-gray-800 mb-2">Experience</h5>
-                                    <ul className="space-y-1">
-                                        {form.experiencePoints.filter(Boolean).map((point, i) => (
-                                            <li key={i} className="text-sm text-gray-600 flex items-start">
-                                                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 mt-1.5 flex-shrink-0"></span>
-                                                {point}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Social Links Preview */}
-                            {(form.telegramLink || form.instagramLink || form.linkedinLink || form.portfolioLink) && (
-                                <div className="pt-4 border-t border-gray-200">
-                                    <h5 className="font-semibold text-gray-800 mb-2">Links</h5>
-                                    <div className="space-y-2">
-                                        {form.telegramLink && (
-                                            <div className="flex items-center text-sm text-blue-600">
-                                                <MessageCircle className="w-4 h-4 mr-2" />
-                                                Telegram
-                                            </div>
-                                        )}
-                                        {form.instagramLink && (
-                                            <div className="flex items-center text-sm text-blue-600">
-                                                <Instagram className="w-4 h-4 mr-2" />
-                                                Instagram
-                                            </div>
-                                        )}
-                                        {form.linkedinLink && (
-                                            <div className="flex items-center text-sm text-blue-600">
-                                                <Linkedin className="w-4 h-4 mr-2" />
-                                                LinkedIn
-                                            </div>
-                                        )}
-                                        {form.portfolioLink && (
-                                            <div className="flex items-center text-sm text-blue-600">
-                                                <Globe className="w-4 h-4 mr-2" />
-                                                Portfolio
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </aside>
                 </main>
             </div>
         </div>

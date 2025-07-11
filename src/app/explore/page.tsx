@@ -122,20 +122,20 @@ const handleSearchChange = (val: string) => setSearchTerm(val);
     onClick={handleReset}
     className="px-4 py-2 rounded-full text-sm  font-medium border border-gray-300 bg-gray-100 hover:bg-red-500 text-gray-700"
   >
-    Reset Explore
+    Reset
   </button>
         </div>
 
         {/* Section Title + Show All Toggle */}
-        <div className="w-full max-w-4xl flex justify-end items-center px-4">
+        {/* <div className="w-full max-w-4xl flex justify-end items-center px-4"> */}
           {/* <h2 className="text-2xl font-semibold">Popular Quizzes</h2> */}
-          <button
+          {/* <button
             onClick={() => setShowAll(prev => !prev)}
             className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm hover:bg-blue-700 transition "
           >
             {showAll ? 'Show Top 3' : 'Show All Quizzes'}
           </button>
-        </div>
+        </div> */}
 
         {/* Loading / Error */}
         {isLoading && <p>Loading quizzes…</p>}
@@ -145,7 +145,7 @@ const handleSearchChange = (val: string) => setSearchTerm(val);
           <Trending
             category={selectedCategory}
             data={filtered}
-            limit={showAll ? undefined : 3}
+            limit={showAll ? undefined : undefined}
           />
         )}
       </div>

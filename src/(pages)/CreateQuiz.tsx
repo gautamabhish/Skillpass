@@ -108,6 +108,9 @@ const CreateQuiz = () => {
         await new Promise(resolve => setTimeout(resolve, 1000));  // Let user see success
         router.push(`/create-quiz`);
       }
+      if(res.status===403){
+        router.push('/creator-verification');
+      }
     } catch (err) {
       console.error('Quiz creation failed', err);
     }

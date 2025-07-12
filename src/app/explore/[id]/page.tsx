@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useAppSelector } from '@/store/hooks';
 import * as Chart from 'chart.js/auto';
-
+import NotFound from '@/app/not-found';
 import { useParams, useSearchParams } from 'next/navigation'; // Import from next/navigation for App Router
 import Image from 'next/image';
 import {
@@ -345,12 +345,7 @@ router.push("/dashboard");
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">data not found</h1>
-          <p className="text-gray-600">The data you're looking for doesn't exist.</p>
-        </div>
-      </div>
+    <NotFound/>
     );
   }
 

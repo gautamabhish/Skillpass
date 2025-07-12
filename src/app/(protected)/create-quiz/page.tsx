@@ -4,7 +4,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import { Rocket, DollarSign, Clock, CheckCircle, AlertCircle, Send } from 'lucide-react';
+import { Rocket, DollarSign, Clock, CheckCircle, AlertCircle, Send,ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import NavbarLogged from '@/components/ui/globals/NavbarLogged';
 import { useGetCreations } from '@/hooks/useGetCreations';
@@ -169,7 +169,8 @@ const settledAmount = useMemo(
   return (
   <>
   <NavbarLogged />
-  <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-8 sm:px-6 lg:px-12">
+  <div className=" min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-8 sm:px-6 lg:px-12">
+   
     <div className="max-w-7xl mx-auto">
 
       {/* Earnings Summary */}
@@ -178,6 +179,7 @@ const settledAmount = useMemo(
           <h2 className="text-base sm:text-lg font-semibold text-gray-800">Total Earnings</h2>
           <p className="text-xl sm:text-2xl text-blue-600 font-bold mt-2">₹{totalEarnings}</p>
         </div>
+      
         <div className="text-center bg-white rounded-xl shadow-md p-4 sm:p-6">
           <h2 className="text-base sm:text-lg font-semibold text-gray-800">Settled Amount</h2>
           <p className="text-xl sm:text-2xl text-green-600 font-bold mt-2">₹{settledAmount}</p>
@@ -186,6 +188,9 @@ const settledAmount = useMemo(
           <h2 className="text-base sm:text-lg font-semibold text-gray-800">Pending Settlement</h2>
           <p className="text-xl sm:text-2xl text-orange-600 font-bold mt-2">₹{pendingAmount}</p>
         </div>
+         <div className="sm:col-span-1 flex justify-center items-center">
+
+  </div>
       </div>
 
       {/* Settlement Request */}
@@ -276,13 +281,22 @@ const settledAmount = useMemo(
       )}
 
       {/* Create Quiz Button */}
-      <div className="flex justify-center my-8">
+      <div className="flex justify-center my-8 gap-2">
         <Link
           href="/create-quiz/dereq"
-          className="inline-flex items-center gap-2 px-6 sm:px-8 py-2 sm:py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
+          className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
         >
           <Rocket size={18} /> Create Quiz
         </Link>
+        
+       <Link
+        href="/creator-verification"
+        className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-blue-700 text-white font-semibold rounded-full shadow-lg hover:bg-blue-600 transition transform hover:scale-105"
+      >
+        <ShieldCheck size={16} />
+        {data?.creatorVerified ? 'Update Verification' : 'Get Verified'}
+      </Link>
+    
       </div>
 
       {/* Quizzes */}
@@ -346,7 +360,9 @@ const settledAmount = useMemo(
         )
       )}
     </div>
+      
   </div>
+   
 </>
 
   );

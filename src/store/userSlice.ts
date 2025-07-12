@@ -64,6 +64,34 @@ export const verifyOtp = createAsyncThunk(
   }
 );
 
+export const sendOtpForReset = createAsyncThunk(
+  'user/sendOtpForReset',
+  async ({ email }: { email: string }, thunkAPI) => {
+    const response = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/forgot-password`, { email });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return thunkAPI.rejectWithValue('Failed to send OTP');
+    }
+  }
+);
+export const updatePasswordWithOtp = createAsyncThunk(
+  'user/updatePasswordWithOtp',
+  async ({ email, otp, newPassword }: { email: string; otp: string; newPassword: string }, thunkAPI) => {
+    const response = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/verify-otp-and-update-pass`, {
+      email,
+      otp,
+      newPassword,
+    });
+    if (response.status === 200) {
+      
+      return response.data;
+    } else {
+      return thunkAPI.rejectWithValue('Failed to update password');
+    }
+  }
+);
+
 // export const signInWithGoogle = createAsyncThunk(
 //   'user/signInWithGoogle',
 //   async (credential: string, { dispatch }) => {

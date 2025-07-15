@@ -454,7 +454,7 @@ router.push("/dashboard");
                     className="flex items-center gap-3 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full font-semibold text-gray-900 hover:bg-white transition-colors"
                   >
                     <FaPlay className="text-blue-700" />
-                    Preview data
+                    Preview Quiz
                   </button>
                 </div>
               </div>
@@ -741,7 +741,7 @@ router.push("/dashboard");
                   <FaUsers className="text-blue-600 text-2xl" />
                   <div>
                     <div className="text-xl font-bold text-gray-900">{data.summary.totalAttempts}</div>
-                    <div className="text-sm text-gray-600">Total data Attempts</div>
+                    <div className="text-sm text-gray-600">Total Attempts</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg">

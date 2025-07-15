@@ -249,7 +249,7 @@ const handleShare = async () => {
       }
     );
 
-    const url = res.data.referralLink; // Assuming the backend returns the referral link
+    const url = res.data?.referralLink || 'Service Down'; // Assuming the backend returns the referral link
     if (navigator.share) {
       await navigator.share({ title: data?.title, url });
     } else {

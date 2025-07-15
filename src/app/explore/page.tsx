@@ -1,19 +1,14 @@
-// app/explore/page.ts
-//x
-//@ts-nocheck
 'use client';
 
-import React, { useState, useEffect,useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import clsx from 'clsx';
-
 import Navbar from '@/components/ui/globals/ExploreNavbar';
 import Footer from '@/components/ui/globals/Footer';
 import SearchBar from '@/components/ui/globals/SearchBar';
 import { Trending } from '@/components/explore/Trending';
 import { useExplore } from '@/hooks/useExplore';
 import { useQuizTagFetch } from '@/hooks/useQuizTagFetch';
-import { useAppSelector } from '@/store/hooks';
-import { all } from 'axios';
+import ExploreLoading from '../loading';
 
 type Quiz = {
   id: string;
@@ -32,91 +27,106 @@ type Quiz = {
 const categories = ['All Categories', 'Programming', 'Design', 'Business', 'Marketing'];
 
 const ExplorePage: React.FC = () => {
-const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
-const [searchKey, setSearchKey] = useState<'title' | 'creator' | 'tag'>('title');
-const [searchValue, setSearchValue] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+  const [searchKey, setSearchKey] = useState<'title' | 'creator' | 'tag'>('title');
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<Quiz[] | null>(null);
 
-const [searchResults, setSearchResults] = useState<Quiz[] | null>(null);
-const [filtered, setFiltered] = useState<Quiz[]>([]);
-const [showAll, setShowAll] = useState<boolean>(false);
+  const { data: searchedQuizzes, refetch: refetchSearch } = useQuizTagFetch(searchKey, searchValue);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useExplore();
 
-const { data: searchedQuizzes, refetch: refetchSearch } = useQuizTagFetch(searchKey, searchValue);
-const { data, isLoading, isError } = useExplore();
-const allQuizzes = useMemo(() => data?.courses || [], [data?.courses]);
+  const allQuizzes = useMemo(() => {
+    return data?.pages.flatMap((page) => page.courses.data) || [];
+  }, [data]);
 
-// When allQuizzes loads initially, set filtered
-useEffect(() => {
-  setFiltered(allQuizzes);
-}, [allQuizzes]);
+  const filtered = useMemo(() => {
+    const base = searchResults ?? allQuizzes;
+    if (selectedCategory === 'All Categories') return base;
 
-
-// Category + searchResults filter logic
-useEffect(() => {
-  const base = searchResults !== null ? searchResults : allQuizzes;
-  // console.log('Base quizzes:', base);
-  if (selectedCategory === 'All Categories') {
-    setFiltered(base);
-  } else {
-    const result = base.filter(q =>
-      q.quizTags?.some(tag =>
+    return base.filter(q =>
+      q.quizTags?.some((tag:any) =>
         tag.toLowerCase().includes(selectedCategory.toLowerCase())
       )
     );
-    // console.log('Filtered results:', result);
-    setFiltered(result);
-  }
-}, [selectedCategory, searchResults, allQuizzes]);
+  }, [searchResults, allQuizzes, selectedCategory]);
 
+  let loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-const handleReset = () => {
-  setSearchTerm('');
-  setSelectedCategory('All Categories');
-  setSearchResults(null);
-  setFiltered(allQuizzes);
-};
+useEffect(() => {
+  const node = loadMoreRef.current;
+  if (!node || !hasNextPage) return;
 
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    { threshold: 1 }
+  );
 
-// Handle input change
-const handleSearchChange = (key: string, value: string) => {
-  setSearchKey(key as any);
-  setSearchValue(value);
-};
+  observer.observe(node);
 
-const handleSearchSubmit = async (key: string, value: string) => {
-  setSearchKey(key as any);
-  setSearchValue(value);
-  if (!value.trim()) {
-    setSearchResults(allQuizzes);
-    return;
-  }
-  try {
-    const { data } = await refetchSearch();
-    setSearchResults(data || []);
-  } catch (err) {
-    console.error('Search failed:', err);
-  }
-};
+  return () => {
+    observer.disconnect();
+  };
+}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleReset = () => {
+    setSearchValue('');
+    setSelectedCategory('All Categories');
+    setSearchResults(null);
+  };
+
+  const handleSearchChange = (key: string, value: string) => {
+    setSearchKey(key as 'title' | 'creator' | 'tag');
+    setSearchValue(value);
+  };
+
+  const handleSearchSubmit = async (key: string, value: string) => {
+    setSearchKey(key as 'title' | 'creator' | 'tag');
+    setSearchValue(value);
+    if (!value.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    try {
+      const { data } = await refetchSearch();
+      setSearchResults(data || []);
+    } catch (err) {
+      console.error('Search failed:', err);
+    }
+  };
+
+  if (isLoading) return <ExploreLoading />;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f5f5f5] p-4 gap-y-8">
       <Navbar />
 
       <div className="flex flex-col items-center gap-y-6">
-        {/* Search + Autocomplete */}
+        {/* Search */}
         <SearchBar
           quizzes={allQuizzes}
           onSearch={handleSearchChange}
           onSubmit={handleSearchSubmit}
         />
 
-        {/* Category Filters */}
+        {/* Categories */}
         <div className="flex flex-wrap justify-center gap-2">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => {
                 setSelectedCategory(cat);
-                setSearchTerm('');
+                setSearchValue('');
               }}
               className={clsx(
                 'px-4 py-2 rounded-full text-sm font-medium border transition',
@@ -127,39 +137,37 @@ const handleSearchSubmit = async (key: string, value: string) => {
             >
               {cat}
             </button>
-
-            
           ))}
-           <button
-    onClick={handleReset}
-    className="px-4 py-2 rounded-full text-sm  font-medium border border-gray-300 bg-gray-100 hover:bg-red-500 text-gray-700"
-  >
-    Reset
-  </button>
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 rounded-full text-sm font-medium border border-gray-300 bg-gray-100 hover:bg-red-500 text-gray-700"
+          >
+            Reset
+          </button>
         </div>
 
-        {/* Section Title + Show All Toggle */}
-        {/* <div className="w-full max-w-4xl flex justify-end items-center px-4"> */}
-          {/* <h2 className="text-2xl font-semibold">Popular Quizzes</h2> */}
-          {/* <button
-            onClick={() => setShowAll(prev => !prev)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm hover:bg-blue-700 transition "
-          >
-            {showAll ? 'Show Top 3' : 'Show All Quizzes'}
-          </button>
-        </div> */}
-
-        {/* Loading / Error */}
-        {isLoading && <p>Loading quizzes…</p>}
+        {/* Error */}
         {isError && <p className="text-red-500">Failed to load quizzes.</p>}
-        {/* Quiz Grid via Trending */}
-        {!isLoading && !isError && (
+
+        {/* No results */}
+        {filtered.length === 0 && (
+          <p className="text-gray-500">No quizzes found. Try different filters or search.</p>
+        )}
+
+        {/* Trending Section */}
+        {filtered.length > 0 && (
           <Trending
             category={selectedCategory}
             data={filtered}
-            limit={showAll ? undefined : undefined}
+            limit={undefined}
           />
         )}
+
+        {/* Load More */}
+        <div ref={loadMoreRef} className="h-10 flex justify-center items-center">
+          {isFetchingNextPage && <span>Loading ...</span>}
+          {!hasNextPage && <span className="text-gray-500">Did you know? You can create new Quizzes.</span>}
+        </div>
       </div>
 
       <div className="mt-auto">

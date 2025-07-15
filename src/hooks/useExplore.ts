@@ -1,26 +1,31 @@
-// hooks/useDashboard.ts
-
-import { useQuery } from '@tanstack/react-query';
-import { useAppSelector } from '@/store/hooks';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export const useExplore = () => {
-  const userId = useAppSelector((state) => state.user.id);
-  
- 
-  return useQuery({
-    queryKey: ['explore',userId ],
-    queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/explore`, {
-  withCredentials: true,
-});
-
+  return useInfiniteQuery({
+    queryKey: ['explore'],
+    queryFn: async ({ pageParam = null }) => {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/explore`,
+        {
+          params: { cursor: pageParam },
+          withCredentials: true,
+        }
+      );
       return res.data;
     },
-    // enabled: userId, // prevents running query until userId exists
-    staleTime: 1000 * 60 * 5, // optional: 5 min cache
-     refetchOnWindowFocus: false, // No refetch on window focus
-    refetchOnReconnect: false,      // No refetch on network reconnect
-    refetchOnMount: false,          // No refetch on remount
+    getNextPageParam: (lastPage) =>{
+      const cursor = lastPage?.courses?.nextCursor;
+      return cursor?? undefined;
+    }
+,
+    // ✅ REQUIRED: this tells React Query the initial `pageParam` to start from
+    initialPageParam: null,
+
+    // Optional fine-tuning
+    staleTime: 1000 * 60 * 15,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 };

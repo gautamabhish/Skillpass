@@ -21,9 +21,10 @@ export default function SignInPage() {
   const [isForgotFlow, setIsForgotFlow] = useState(false);
   const [step, setStep] = useState<'enterEmail' | 'enterOtp'>('enterEmail');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [signInLoading, setSignInLoading] = useState(false);
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSignInLoading(true);
     try {
       const result = await dispatch(signIn({ email, password }));
       if (signIn.fulfilled.match(result)) {
@@ -33,6 +34,9 @@ export default function SignInPage() {
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
+    }
+    finally {
+      setSignInLoading(false);
     }
   };
 
@@ -113,7 +117,7 @@ export default function SignInPage() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
             >
-              Sign In
+              {signInLoading ? 'Verifying...' : 'Sign In'}
             </button>
 
             <p className="text-sm text-right">

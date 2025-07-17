@@ -77,7 +77,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      ><link rel="icon" href="/logonew.ico" sizes="any" />
+      >
+        <link rel="icon" href="/logonew.ico" type='image/x-icon'/>
 
      <QueryProvider>
 

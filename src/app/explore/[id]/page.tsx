@@ -298,7 +298,7 @@ const handleEnroll = async () => {
         ? 'referral applying'
         : `Note the payment id for any queries.`,
       order_id: orderId,
-        image: "/certifi.png",
+        image: "/logonew.png",
       handler: async (response: any) => {
         try {
           // 3. Verify payment on backend

@@ -293,7 +293,7 @@ export default function JEEStyleQuizInterface({ id }: { id: string }) {
   <div className="flex flex-col bg-white gap-8">
       <div className="flex justify-between items-center border-b-2 border-gray-200 py-2 px-4">
         <div className="font-bold text-blue-800 text-2xl flex items-center gap-2">
-          <Image src="/certifi.png" height={32} width={32} alt="CERTI" />
+          <Image src="/logonew.png" height={32} width={32} alt="CERTI" />
           {quizTitle}
         </div>
 

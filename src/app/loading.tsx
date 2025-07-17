@@ -1,20 +1,14 @@
-'use client';
-import { useEffect, useState } from 'react';
-
+import Image from "next/image";
 export default function ExploreLoading() {
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
 
-  if (!hydrated) {
-    return null;  // Or a minimal SSR-safe placeholder
-  }
 
   return (
     <div style={styles.container}>
-      <div className='spinner'></div>
+      
+      
+        <Image src="/logonew.png" alt='o' height={15} width={15} className="spinner"></Image>
+   
     </div>
   );
 }

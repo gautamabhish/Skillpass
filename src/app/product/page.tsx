@@ -1,8 +1,5 @@
 //@ts-nocheck
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import clsx from 'clsx';
 const inter = Inter({ subsets: ['latin'] });
@@ -175,9 +172,9 @@ export default function ProductPage() {
               <li className="flex items-center"><span className="text-green-500 mr-2">✓</span>Referral rewards program</li>
               <li className="flex items-center"><span className="text-green-500 mr-2">✓</span>Community features</li>
             </ul>
-            <button className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition" onClick={() => router.push('/register') }>
+            <Link href='/explore' className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition px-1.5">
               Start Learning Free
-            </button>
+            </Link>
           </div>
 
           <div className="border-2 border-[#3277ee] rounded-lg p-8 shadow-lg text-center">
@@ -193,9 +190,9 @@ export default function ProductPage() {
               <li className="flex items-center"><span className="text-blue-500 mr-2">✓</span>Direct learner engagement</li>
               <li className="flex items-center"><span className="text-blue-500 mr-2">✓</span>Promotional opportunities</li>
             </ul>
-            <button className="w-full bg-[#3277ee] text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition" onClick={() => router.push('/register')}>
+            <Link href='/create-quiz' className="w-full bg-[#3277ee] text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition px-1.5" >
               Become a Creator
-            </button>
+            </Link>
           </div>
         </div>
 

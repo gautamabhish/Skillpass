@@ -22,11 +22,24 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Skillpass.org - Learn, Certify, and Advance Your Career',
   icons: {
-    icon:"/globe.png"
+    icon:"/logonew.png"
   },
   description: 'Skillpass.org offers high-quality online quizzes, certifications, and learning resources to help you master new skills and boost your career.',
   keywords: [
     'Skillpass',
+    'Skill Pass',
+    'skillspass.org.mt',
+    'Skills Pass Malta',
+    'Courses',
+    'Register',
+    'Login',
+    'Quizzes',
+    'Certifications',
+    'Skill Development',
+    'Online Learning',
+    'Career Advancement',
+    'Skill Assessment',
+    'skillpass.com',
     'online learning',
     'certification',
     'free quizzes',
@@ -41,7 +54,7 @@ export const metadata: Metadata = {
     siteName: 'Skillpass.org',
     images: [
       {
-        url: 'https://www.skillpass.org/globe.png', // Replace with your actual OG image URL
+        url: 'https://www.skillpass.org/logonew.png', // Replace with your actual OG image URL
         width: 1200,
         height: 630,
         alt: 'Skillpass.org - Unlock Your Potential',
@@ -64,7 +77,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      ><link rel="icon" href="/globe.ico" sizes="any" />
+      ><link rel="icon" href="/logonew.ico" sizes="any" />
 
      <QueryProvider>
 

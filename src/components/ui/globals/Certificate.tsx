@@ -1,9 +1,22 @@
+// @ts-nocheck
 'use client';
+
 import React from 'react';
 import { Cedarville_Cursive } from 'next/font/google';
-import clsx from 'clsx';
 import { useCertificateFetch } from '@/hooks/useCerificateFetch';
 import ExploreLoading from '@/app/loading';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import {
+  Instagram,
+  Linkedin,
+  Download,
+  Share2,
+  MessageCircle,
+} from 'lucide-react';
+import Image from 'next/image';
+
+import './certificate.css';
 
 const Cedarvile = Cedarville_Cursive({
   subsets: ['latin'],
@@ -17,121 +30,124 @@ type CertificateProps = {
 
 const Certificate = ({ certificateId }: CertificateProps) => {
   const { data, isLoading } = useCertificateFetch(certificateId);
+  if (isLoading || !data?.certificateDetails) return <ExploreLoading />;
+  const c = data.certificateDetails;
 
   const generateQRCode = () => {
-    const qrData = encodeURIComponent(`https://skillpass.org/certificate/${certificateId}`);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${qrData}`;
+    const url = `https://skillpass.org/certificate/${certificateId}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}`;
   };
-    const certificateData = data?.certificateDetails;
-  if (isLoading || !certificateData) {
-    return <ExploreLoading/>;
-  }
 
-  const issueDate = new Date(certificateData.issuedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+const handleDownloadPDF = async () => {
+  const el = document.getElementById('print-area');
+  if (!el) return;
+
+  // Render DOM to canvas at double resolution
+  const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+  // Create A4 landscape PDF
+  const pdf = new jsPDF('l', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();   // ~297mm
+  const pageHeight = pdf.internal.pageSize.getHeight(); // ~210mm
+
+  // Calculate image height to maintain aspect ratio
+  const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+  // If the rendered certificate is taller than the pageHeight, scale it down
+  const finalHeight = imgHeight > pageHeight ? pageHeight : imgHeight;
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, finalHeight);
+
+  // Safe filename
+  const safeName = c.userName.replace(/\s+/g, '_');
+  const safeQuiz = c.quizTitle.replace(/\s+/g, '_');
+  pdf.save(`${safeName}-${safeQuiz}.pdf`);
+};
+
+
+  const shareURL = `https://skillpass.org/certificate/${certificateId}`;
+  const fallbackCopy = () => {
+    navigator.clipboard.writeText(shareURL);
+    alert('Link copied to clipboard!');
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50">
-      <div
-        id="print-area"
-        className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-8 border-4  border-[#d4a574] rounded-lg shadow-2xl"
-      >
-        {/* Decorative corners */}
-        <div className="absolute top-4 left-4 w-8 h-8 border-l-4 border-t-4 border-yellow-500"></div>
-        <div className="absolute top-4 right-4 w-8 h-8 border-r-4 border-t-4 border-yellow-500"></div>
-        <div className="absolute bottom-4 left-4 w-8 h-8 border-l-4 border-b-4 border-yellow-500"></div>
-        <div className="absolute bottom-4 right-4 w-8 h-8 border-r-4 border-b-4 border-yellow-500"></div>
+    <div className="container">
+      <div id="print-area" className="certificateBox">
+         <div className="logo">
+       <Image src="/logonew.png" alt="SkillPass Logo" width={96} height={96} />
+    </div>
+        <div className="corner topLeft" />
+        <div className="corner topRight" />
+        <div className="corner bottomLeft" />
+        <div className="corner bottomRight" />
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-2 tracking-wider">
-            CERTIFICATE
-          </h1>
-          <h2 className="text-2xl text-blue-700 font-semibold">OF ACHIEVEMENT</h2>
-          <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto mt-4 rounded-full"></div>
+        <div className="header">
+          <h1>CERTIFICATE</h1>
+          <h2>OF ACHIEVEMENT</h2>
+          <div className="underline" />
         </div>
 
-        {/* Main content */}
-        <div className="text-center mb-8">
-          <p className="text-lg text-gray-700 mb-6">This is to certify that</p>
-          <h3 className="text-3xl md:text-4xl font-bold text-blue-900 mb-6 border-b-2 border-blue-300 pb-2 inline-block">
-            {certificateData.userName}
-          </h3>
-          <p className="text-lg text-gray-700 mb-4">has successfully completed</p>
-          <h4 className="text-xl md:text-2xl font-semibold text-blue-800 mb-6">
-            {certificateData.quizTitle}
-          </h4>
-
-          {/* Score and Rank */}
-          <div className="flex justify-center space-x-12 mb-8">
-            <div className="text-center">
-              <div className="bg-green-100 rounded-full px-6 py-3 mb-2">
-                <span className="text-2xl font-bold text-green-800">
-                  {certificateData.score}/{certificateData.totalScore}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 font-medium">SCORE</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-100 rounded-full px-6 py-3 mb-2">
-                <span className="text-2xl font-bold text-purple-800">#{certificateData.rank}</span>
-              </div>
-              <p className="text-sm text-gray-600 font-medium">RANK</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex justify-between items-end mt-12">
-          {/* Left - Info */}
-          <div className="text-left">
-            {/* <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-1">Certificate ID:</p>
-              <p className="font-mono text-sm font-bold text-blue-800">{certificateData.id}</p>
-            </div> */}
+        <div className="main">
+          <p>This is to certify that</p>
+          <h3 className="username">{c.userName}</h3>
+          <p>has successfully completed</p>
+          <h4 className="quizTitle">{c.quizTitle}</h4>
+          <div className="stats">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Date Issued:</p>
-              <p className="text-sm font-semibold text-gray-800">{issueDate}</p>
-            </div>
-          </div>
-
-          {/* Center - QR Code */}
-          <div className="text-center">
-            <img
-              src={generateQRCode()}
-              alt="Certificate QR Code"
-              className="mx-auto mb-2 border-2 border-gray-300 rounded"
-            />
-            <p className="text-xs text-gray-500">Scan to verify</p>
-          </div>
-
-          {/* Right - Signature */}
-          <div className="text-right">
-            <div className="w-48">
-              <p className={clsx("text-xl font-[cursive] text-gray-800 leading-tight", Cedarvile.className)}>
-                SkillPass
-              </p>
-              <div className="border-t-2 border-gray-400 pt-1">
-                <p className="text-xs text-gray-500">Authorized Signature</p>
+              <div className="badge score">
+                <span>{c.score}/{c.totalScore}</span>
               </div>
-              <p className="text-xs text-gray-600 mt-1 italic">
-                Quiz Created by: {certificateData.creatorName}
-              </p>
+              <p>SCORE</p>
             </div>
+            <div>
+              <div className="badge rank">
+                <span>#{c.rank}</span>
+              </div>
+              <p>RANK</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="footer">
+          <div className="info">
+            <p>Date Issued:</p>
+            <p className="date">{new Date(c.issuedAt).toLocaleDateString()}</p>
+          </div>
+          <div className="qr">
+            <img src={generateQRCode()} alt="QR Code" />
+            <p>Scan to verify</p>
+          </div>
+          <div className="signature">
+            <p className="signer" style={{ fontFamily: Cedarvile.variable }}>SkillPass</p>
+            <p>Authorized Signature</p>
+            <p className="creator">Quiz Created by: {c.creatorName}</p>
           </div>
         </div>
       </div>
 
-      {/* Print button */}
-      <div className="text-center mt-6">
-        <button
-          onClick={() => window.print()}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-200"
-        >
+      <div className="actions">
+        <button className="printBtn" onClick={() => window.print()}>
           Print Certificate
+        </button>
+        <button className="pdfBtn" onClick={handleDownloadPDF}>
+          <Download /> Download PDF
+        </button>
+      </div>
+
+      <div className="socialIcons">
+        <a href={`https://www.instagram.com/?url=${encodeURIComponent(shareURL)}`} target="_blank" rel="noopener">
+          <Instagram color="#E1306C" />
+        </a>
+        <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareURL)}`} target="_blank" rel="noopener">
+          <Linkedin color="#0A66C2" />
+        </a>
+        <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareURL)}`} target="_blank" rel="noopener">
+          <MessageCircle color="#25D366" />
+        </a>
+        <button onClick={navigator.share ? () => navigator.share({ title: 'My Certificate', url: shareURL }) : fallbackCopy}>
+          <Share2 color="#374151" />
         </button>
       </div>
     </div>

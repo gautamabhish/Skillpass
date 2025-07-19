@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import React from 'react';
-
+import Image from 'next/image';
 const Navbar = () => {
   return (
     <nav className="flex justify-between items-center py-3 px-6 sm:px-12">
       {/* Left: Brand + Nav Links */}
       <div className="flex items-center gap-12">
         <Link href="/" className="text-[#1658e7e8] font-semibold text-2xl">
-          SkillPass
+           <Image src="/logonew.png" height={40} width={40} alt="SkillPass" className='scale-200 rotate-[22.5]'></Image>
         </Link>
 
         <div className="hidden sm:flex gap-8 text-[#616975]">

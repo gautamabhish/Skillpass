@@ -13,7 +13,7 @@ interface CardProps {
 function Card(props : CardProps) {
   const { title, number, subtext, icon: Icon, color } = props;
   return (
-    <div className="bg-white shadow-md rounded-xl p-4 w-fit min-w-[330px] md:min-w-[300px] flex flex-col gap-2">
+    <div className="bg-white shadow-md rounded-xl p-4 w-fit min-w-[300px] md:min-w-[300px] flex flex-col gap-2">
       <div className="flex justify-between items-center">
         <p className="text-sm text-gray-600 font-medium">{title}</p>
         <Icon color={color} />

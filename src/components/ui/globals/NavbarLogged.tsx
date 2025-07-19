@@ -39,7 +39,9 @@ useEffect(() => {
       {/* Branding */}
       <div className="ml-8 text-2xl flex gap-4 font-bold text-[#095ef1]">
         {/* <img src="/globe.png" className="h-12 w-12 object-cover  grayscale-100 "  alt="Logo" /> */}
-        <Link href="/">SkillPass</Link>
+        <Link href="/">
+         <Image src="/logonew.png" height={40} width={40} alt="SkillPass" className='scale-200 rotate-[22.5]'></Image>
+        </Link>
       </div>
 
       {/* Right Side */}

@@ -23,7 +23,7 @@ const Navbar = () => {
     <nav className="flex items-center justify-between px-6 py-4 bg-white relative z-50">
       {/* Logo */}
       <Link href='/' className={clsx('text-2xl cursor-pointer font-semibold text-blue-600', inter.className)}>
-        SkillPass
+        <Image src="/logonew.png" height={40} width={40} alt="SkillPass" className='scale-200 rotate-[22.5]'></Image>
       </Link>
 
       {user?

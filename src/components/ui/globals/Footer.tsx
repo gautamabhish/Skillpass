@@ -2,14 +2,14 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white text-[#3b4658] py-12">
+    <footer className="bg-white text-[#3b4658] pt-10 pb-4">
       <div className="container mx-auto px-6 lg:px-20">
         {/* Column Layout: Four Columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           
           {/* Column 1: Branding */}
           <div className="flex flex-col">
-            <div className="text-2xl font-bold text-[#3277ee] mb-2">
+            <div className="text-2xl font-bold text-[#3277ee] mb-2 uppercase ">
               SkillPass
             </div>
             <p className="text-gray-600">

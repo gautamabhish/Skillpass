@@ -55,9 +55,6 @@ function RecommendedContainer() {
         ) : (
           <div className="col-span-full text-center mt-10 flex flex-col items-center gap-4">
             <Compass className="w-12 h-12 text-gray-400" />
-            <p className="text-gray-600 text-lg font-medium">
-              No recommendations found at the moment.
-            </p>
             <Link
               href="/explore"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"

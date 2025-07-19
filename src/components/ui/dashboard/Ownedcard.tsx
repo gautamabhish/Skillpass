@@ -62,7 +62,7 @@ function RecommendCard(props: cardData) {
 
   return (
    <div
-  className="bg-white rounded-2xl shadow-md overflow-hidden transition hover:opacity-90 duration-300  w-full sm:w-[300px] md:w-[350px] flex flex-col cursor-pointer h-[380px]"
+      className="bg-white rounded-2xl shadow-md overflow-hidden transition hover:opacity-90 duration-300  sm:w-[300px] md:w-[350px] h-[380px] flex flex-col cursor-pointer"
   onClick={() => router.push(`/explore/${id}`)}
 >
 

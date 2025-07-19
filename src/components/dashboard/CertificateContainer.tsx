@@ -17,7 +17,7 @@ function CertificatesContainer() {
         Your Certificates
       </h1>
     
-<div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(350px,1fr))]">
+<div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(350px,1fr))] md:place-items-start">
 
 
         {isLoading ? (

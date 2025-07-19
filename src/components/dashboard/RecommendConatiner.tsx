@@ -16,7 +16,7 @@ function RecommendedContainer() {
         Recommended for You
       </h1>
 
-      <div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(350px,1fr))]">
+      <div className="grid gap-3 mt-4 place-items-center  grid-cols-[repeat(auto-fit,minmax(350px,1fr))] md:place-items-start">
 
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
@@ -37,7 +37,7 @@ function RecommendedContainer() {
           ))
         ) : quizzes.length > 0 ? (
           quizzes.map((quiz: any, idx: number) => (
-            <div key={quiz.id || idx} className="w-full max-w-sm">
+            <div key={quiz.id || idx} className="w-full max-w-[300px] p-2 ">
               <RecommendCard
                 id={quiz.id}
                 image={quiz.thumbnailURL || "https://static.vecteezy.com/system/resources/previews/011/066/660/original/quiz-time-button-quiz-time-speech-bubble-quiz-time-text-web-template-illustration-vector.jpg"}

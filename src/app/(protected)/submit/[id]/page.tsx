@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import * as Chart from 'chart.js/auto';
 import {
@@ -14,6 +14,7 @@ import {
   FaChartBar,
 } from 'react-icons/fa';
 import Link from 'next/link';
+import ExploreLoading from '@/app/loading';
 
 export default function SubmissionDetailPage() {
   const { id: attemptId } = useParams() as { id: string };
@@ -29,7 +30,7 @@ export default function SubmissionDetailPage() {
   const [rating, setRating] = useState<number | null>(null);
 const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 const [ratingSubmitted, setRatingSubmitted] = useState(false);
-
+const [invalid, setInvalid] = useState(false);
 const handleRating = async (value: number) => {
   if (isSubmittingRating || ratingSubmitted) return;
   setRating(value);
@@ -65,22 +66,11 @@ const handleRating = async (value: number) => {
       }
     }
 
-    axios
-      .get(`http://localhost:5000/api/quiz/fetch/${attemptId}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-        localStorage.setItem('submissionData', JSON.stringify(res.data));
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(true);
-        setLoading(false);
-      });
+    // No valid data in localStorage; mark as invalid
+    setInvalid(true);
+    setLoading(false);
   }, [attemptId]);
-
+  if (invalid && !isLoading) return notFound();
   useEffect(() => {
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
@@ -140,9 +130,7 @@ const handleRating = async (value: number) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-gray-500 animate-pulse">Loading submission...</div>
-      </div>
+     <ExploreLoading/>
     );
   }
 
@@ -276,31 +264,36 @@ const handleRating = async (value: number) => {
 
         </section>
 
-        {/* Top Performers */}
-        <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <FaTrophy className="text-yellow-500 text-2xl" /> Top 5 Performers
-          </h2>
-          <div className="divide-y divide-gray-200">
-            {topAttempts.map((a: any) => (
-              <div
-                key={a.rank}
-                className="flex justify-between py-3 flex-wrap items-center"
-              >
-                <div className="text-gray-700 text-sm sm:text-base">
-                  Rank {a.rank} <span className="font-medium">{a.userName}</span>
-                </div>
-                <div className="text-lg font-semibold text-blue-600">{a.score}</div>
-              </div>
-            ))}
-            <div className="flex justify-between py-3 text-white items-center bg-blue-500 px-4 border rounded-xl flex-wrap">
-              <div className="text-sm sm:text-base">
-                Rank {userAttempt.userRank} <span className="font-medium">You</span>
-              </div>
-              <div className="text-lg font-semibold">{userAttempt.score}</div>
-            </div>
-          </div>
-        </section>
+      {/* Top Performers */}
+<section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
+  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+    <FaTrophy className="text-yellow-500 text-2xl" /> Top 5 Performers
+  </h2>
+  <div className="divide-y divide-gray-200">
+    {topAttempts.map((a: any) => (
+      <div
+        key={a.rank}
+        className="flex justify-between py-3 flex-wrap items-center"
+      >
+        <div className="text-gray-700 text-sm sm:text-base">
+          Rank {a.rank} <span className="font-medium">{a.userName}</span>
+        </div>
+        <div className="text-lg font-semibold text-blue-600">{a.score}</div>
+      </div>
+    ))}
+
+    {/* Only show "You" block if user is not already in topAttempts */}
+    {!topAttempts.some((a: any) => a.userId === userAttempt.userId) && (
+      <div className="flex justify-between py-3 text-white items-center bg-blue-500 px-4 border rounded-xl flex-wrap">
+        <div className="text-sm sm:text-base">
+          Rank {userAttempt.userRank} <span className="font-medium">You</span>
+        </div>
+        <div className="text-lg font-semibold">{userAttempt.score}</div>
+      </div>
+    )}
+  </div>
+</section>
+
 
         {/* Peer Stats */}
         <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">

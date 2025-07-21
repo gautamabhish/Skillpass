@@ -277,7 +277,7 @@ const handleEnroll = async () => {
       referralToken: referralTokenFromUrl ,
     },{
       withCredentials: true, // Ensure cookies are sent for session
-    });
+    })
 
     const { orderId, amount, currency, quizTitle, referralApplied } = response.data;
 
@@ -285,7 +285,7 @@ const handleEnroll = async () => {
     if(orderId ===process.env.NEXT_PUBLIC_FREE_QUIZ_ORDER_ID){
       alert('This quiz is free to access. You can start it now without payment.Check the quizzes owned by you.');
       // router.push(`/session/${data.id}`);
-      router.push("/dashboard");
+      router.push("/session/"+data.id);
          return ;
     }
  
@@ -315,7 +315,7 @@ const handleEnroll = async () => {
           // Optionally refresh or redirect
         } catch (verifyErr) {
           console.error('❌ Payment verification failed:', verifyErr);
-          alert('Payment completed, but verification failed.');
+          alert('verification failed.');
         }
       },
       prefill: {
@@ -331,10 +331,21 @@ const handleEnroll = async () => {
     // console.log('Razorpay options:', options);
     razorpay.open();
   } catch (err) {
-    console.error('Error during Razorpay payment flow:', err.message);
-    
-    alert('Failed to initiate payment.Maybe You may have already purchased it.Redirecting...');
-router.push("/dashboard");
+    if (axios.isAxiosError(err)) {
+    if (err.response?.status === 409) {
+      router.push(`/session/${data.id}`);
+      return;
+    }
+
+    // Other specific status codes
+    if (err.response?.status === 400) {
+      alert('Bad request. Please refresh and try again.');
+      return;
+    }
+  }
+
+  console.error('Error during Razorpay payment flow:', err.message);
+  alert('Failed to initiate payment. Contact support@skillpass.org.');
   }
 };
 
@@ -669,7 +680,7 @@ router.push("/dashboard");
       onClick={handleEnroll}
       className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 sm:py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold text-base sm:text-lg transition-all transform hover:scale-105 shadow-lg"
     >
-      {data.price === 0 ? 'Start Now' : 'Enroll Now'}
+      {'Start Now'}
     </button>
   </div>
 

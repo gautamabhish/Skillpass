@@ -7,12 +7,12 @@ import * as Chart from 'chart.js/auto';
 import {
   FaTrophy,
   FaUsers,
-  FaPercentage,
-
+  FaPercentage, 
   FaStar,
   FaDownload,
   FaChartBar,
 } from 'react-icons/fa';
+import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import ExploreLoading from '@/app/loading';
 
@@ -128,6 +128,11 @@ const handleRating = async (value: number) => {
     };
   }, [data]);
 
+  const handleAnalyse = () => { 
+    window.confirm("No further certifcates will be issued further. Do you want to proceed?") &&
+    router.push(`/deep-analyse/${data.userAttempt.quizId}`);
+  };
+
   if (isLoading) {
     return (
      <ExploreLoading/>
@@ -194,6 +199,10 @@ const handleRating = async (value: number) => {
         <section className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <FaChartBar className="text-blue-600 text-2xl" /> Your Submission
+            <div title="Deep Analysis" onClick={handleAnalyse} className="ml-2">
+  <Sparkles className="text-blue-500 hover:cursor-pointer" />
+</div>
+
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-4">

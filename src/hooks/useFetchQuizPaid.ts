@@ -1,11 +1,8 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useParams } from 'next/navigation';
 
-export const useFetchQuizPaid = (id:string) => {
-
-
+export const useFetchQuizPaid = (id: string) => {
   return useQuery({
     queryKey: ['session', id],
     queryFn: async () => {
@@ -15,9 +12,9 @@ export const useFetchQuizPaid = (id:string) => {
       return res.data;
     },
     enabled: !!id,
-    staleTime: 1000 * 60 * 5,
-     refetchOnWindowFocus: false, // No refetch on window focus
-    refetchOnReconnect: false,      // No refetch on network reconnect
-    refetchOnMount: false,          // No refetch on remount
+    staleTime: 0, // Always stale
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 };

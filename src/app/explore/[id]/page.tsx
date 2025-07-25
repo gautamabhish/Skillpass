@@ -29,8 +29,11 @@ import {
   FaGift,
   FaCheckCircle,
   FaTimesCircle,
-  FaPercentage
+  FaPercentage,
+  FaUserComm
+  
 } from 'react-icons/fa';
+import { RiUserCommunityFill } from "react-icons/ri";
 import { useRouter } from 'next/navigation';
 import { stat } from 'fs';
 import ExploreLoading from '@/app/loading';
@@ -598,11 +601,12 @@ const handleEnroll = async () => {
     </div>
   </div>
 
-  {/* Reviews & Comments */}
+  {/*Doubts and forum*/}
   <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">
     <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
-      <FaStar className="text-yellow-500" />
-      Student Reviews
+     
+      <RiUserCommunityFill className="text-blue-600 text-lg sm:text-xl" />
+      Community Forum
     </h3>
 
     <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
@@ -638,11 +642,12 @@ const handleEnroll = async () => {
     </div>
 
     <div className="border-t pt-4 sm:pt-6">
-      <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4">Share your thoughts</h4>
+      <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4">Discuss</h4>
       <textarea
-        className="w-full border-2 border-gray-200 rounded-xl p-3 sm:p-4 text-xs sm:text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
-        placeholder="Write your review..."
-        rows={3}
+        className="w-full border-2 border-gray-200 resize-none rounded-xl p-3 sm:p-4 text-xs sm:text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
+        placeholder="Write Now (200 words)..."
+        rows={2}
+        maxLength={200}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />
@@ -650,7 +655,7 @@ const handleEnroll = async () => {
         onClick={handleCommentSubmit}
         className="mt-3 sm:mt-4 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold transition-all transform hover:scale-105 shadow-lg"
       >
-        Submit Review
+        Submit 
       </button>
     </div>
   </div>
